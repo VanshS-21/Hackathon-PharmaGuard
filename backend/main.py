@@ -123,8 +123,11 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        os.getenv("FRONTEND_URI", "http://localhost:3000"),
         os.getenv("FRONTEND_URL", "http://localhost:3000"),
         "http://localhost:3000",
+        "https://*.vercel.app",
+        "https://*.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
