@@ -245,17 +245,15 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
         }
         variants.append(variant_entry)
 
-        # Track star alleles for diplotype calling — ONLY include alleles that
-        # actually alter function. Normal-function variants (e.g. CYP2D6*2 is
-        # Benign/synonymous with normal_function) must NOT shift the diplotype.
-        # Only no_function / decreased_function / increased_function count.
-        FUNCTION_ALTERING = {"no_function", "decreased_function", "increased_function"}
-        if allele_function in FUNCTION_ALTERING:
-            if is_hom_alt and star_allele:
-                gene_star_alleles[gene].append(star_allele)
-                gene_star_alleles[gene].append(star_allele)
-            elif is_het and star_allele:
-                gene_star_alleles[gene].append(star_allele)
+        # Track star alleles for diplotype calling.
+        # Per CPIC, ALL star alleles with alt genotypes (het or hom) contribute
+        # to the diplotype — including normal function alleles like CYP2D6*2
+        # (activity=1.0, *1/*2 total AS=2.0 = Normal Metabolizer per CPIC API).
+        if is_hom_alt and star_allele:
+            gene_star_alleles[gene].append(star_allele)
+            gene_star_alleles[gene].append(star_allele)
+        elif is_het and star_allele:
+            gene_star_alleles[gene].append(star_allele)
 
     # ── Rule 7: Final check — reject only if zero variants ──
     if len(variants) == 0:
