@@ -93,7 +93,7 @@ FRONTEND_URI=http://localhost:3000
 
 Start backend:
 ```bash
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
 ```
 > API docs available at: http://localhost:8000/docs
 
