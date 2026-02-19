@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, BookOpen, Activity, Dna, FileText, Shield } from "lucide-react";
+import { ExternalLink, BookOpen, Activity, Dna, FileText, Shield, ArrowRight, CornerDownRight } from "lucide-react";
 import { motion } from "motion/react";
 
 interface DetectedVariant {
@@ -30,6 +30,7 @@ interface ActionPanelProps {
     explanation: {
         mechanism: string;
         evidence_level: string;
+        references: string[];
     };
     variants: DetectedVariant[];
     cpicData?: CpicData | null;
@@ -45,167 +46,106 @@ export function ActionPanel({
     const guidelineUrl = cpicData?.guideline_url || "#";
 
     return (
-        <div className="bg-white border-x border-b border-slate-200 rounded-b-xl p-6 md:p-8 space-y-8">
-            <div className="grid md:grid-cols-3 gap-8">
+        <div className="bg-white/50 backdrop-blur-sm p-6 md:p-8 space-y-8 font-mono text-sm">
 
-                {/* ─── Col 1: Action (Primary) ─── */}
-                <div className="md:col-span-2 space-y-8">
-                    {/* Clinical Action Box */}
+            {/* Exploded View Connector Lines */}
+            <div className="grid md:grid-cols-12 gap-8">
+
+                {/* ─── Col 1: Mechanism (Left) ─── */}
+                <div className="md:col-span-8 space-y-6">
+
+                    {/* Primary Action Box */}
                     <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15 }}
-                        className="bg-slate-50 rounded-xl border border-slate-200 p-6 shadow-sm"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="border-l-2 border-slate-900 pl-6 relative"
                     >
-                        <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Activity className="w-5 h-5 text-teal-600" />
-                            Clinical Recommendation
+                        <div className="absolute -left-[5px] top-0 w-2 h-2 bg-slate-900 rounded-full"></div>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+                            Clinical_Directive
                         </h3>
-
-                        <p className="text-base text-slate-700 leading-relaxed mb-6">
-                            <strong className="text-slate-900">{recommendation.action}:</strong>{" "}
-                            {recommendation.dosing_guidance}
+                        <p className="text-lg text-slate-900 font-bold leading-relaxed">
+                            {recommendation.action}
                         </p>
+                        <p className="text-slate-600 mt-2 border-l border-slate-200 pl-4 py-1 italic">
+                            "{recommendation.dosing_guidance}"
+                        </p>
+                    </motion.div>
 
-                        {recommendation.alternative_drugs.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-3">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                    Alternatives:
-                                </span>
-                                {recommendation.alternative_drugs.map((drug) => (
-                                    <span
-                                        key={drug}
-                                        className="text-xs font-semibold px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm"
-                                    >
+                    {/* Alternatives */}
+                    {recommendation.alternative_drugs.length > 0 && (
+                        <div className="pl-6">
+                            <h4 className="text-[10px] uppercase text-slate-400 mb-2 flex items-center gap-2">
+                                <CornerDownRight className="w-3 h-3" /> Alternatives
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                                {recommendation.alternative_drugs.map(drug => (
+                                    <span key={drug} className="px-2 py-1 bg-white border border-slate-300 text-slate-700 text-xs font-medium shadow-[2px_2px_0px_rgba(0,0,0,0.05)]">
                                         {drug}
                                     </span>
                                 ))}
                             </div>
-                        )}
-                    </motion.div>
-
-                    {/* CPIC Official Recommendation */}
-                    {isCpic && cpicData?.recommendation && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.22 }}
-                            className="bg-teal-50 rounded-xl border border-teal-200 p-6 shadow-sm"
-                        >
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="flex items-center gap-1.5 text-teal-700">
-                                    <Shield className="w-5 h-5" />
-                                    <h3 className="text-base font-bold">CPIC Official Recommendation</h3>
-                                </div>
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 border border-teal-200">
-                                    CPIC Verified
-                                </span>
-                            </div>
-
-                            <p className="text-sm text-teal-900 leading-relaxed mb-4">
-                                {cpicData.recommendation}
-                            </p>
-
-                            {cpicData.guideline_name && (
-                                <div className="flex items-center gap-4 pt-2 border-t border-teal-200/50">
-                                    <span className="text-xs text-teal-600 font-medium truncate flex-1">
-                                        {cpicData.guideline_name}
-                                    </span>
-                                    {cpicData.classification && (
-                                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-100 text-teal-800">
-                                            {cpicData.classification}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        </motion.div>
+                        </div>
                     )}
 
-                    {/* Evidence Section */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="space-y-4"
-                    >
-                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            Evidence & Mechanism
-                        </h4>
+                    <div className="h-px bg-slate-200 w-full my-6 bg-[url('/dotted.svg')]"></div>
 
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="bg-white p-4 rounded-lg border border-slate-100">
-                                <span className="block text-xs font-semibold text-slate-400 mb-1">Mechanism</span>
-                                <p className="text-sm text-slate-700 leading-relaxed">
-                                    {explanation.mechanism}
-                                </p>
-                            </div>
-                            <div className="bg-white p-4 rounded-lg border border-slate-100">
-                                <span className="block text-xs font-semibold text-slate-400 mb-1">Monitoring</span>
-                                <p className="text-sm text-slate-700 leading-relaxed">
-                                    {recommendation.monitoring}
-                                </p>
-                            </div>
+                    {/* Mechanism */}
+                    <div className="grid md:grid-cols-2 gap-6 text-xs">
+                        <div className="space-y-2">
+                            <h4 className="font-bold text-slate-900 uppercase flex items-center gap-2">
+                                <Activity className="w-3 h-3 text-teal-500" /> Mechanism
+                            </h4>
+                            <p className="text-slate-600 leading-relaxed text-justify">
+                                {explanation.mechanism}
+                            </p>
                         </div>
-
-                        <div className="flex items-center gap-6 pt-2">
-                            <a
-                                href={guidelineUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline"
-                            >
-                                <BookOpen className="w-3.5 h-3.5" /> CPIC Guidelines
+                        <div className="space-y-2">
+                            <h4 className="font-bold text-slate-900 uppercase flex items-center gap-2">
+                                <Shield className="w-3 h-3 text-teal-500" /> Guideline
+                            </h4>
+                            <p className="text-slate-600">
+                                {cpicData?.guideline_name || "No specific guideline"}
+                            </p>
+                            <a href={guidelineUrl} target="_blank" className="inline-flex items-center gap-1 text-teal-600 hover:underline mt-1">
+                                [ACCESS_SOURCE] <ExternalLink className="w-3 h-3" />
                             </a>
-                            <a href="#" className="flex items-center gap-2 text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline">
-                                <ExternalLink className="w-3.5 h-3.5" /> PharmGKB Reference
-                            </a>
-                            <span className="ml-auto text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">
-                                Level {explanation.evidence_level} Evidence
-                            </span>
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* ─── Col 2: Genetics ─── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="md:col-span-1"
-                >
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-full">
-                        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                            <Dna className="w-3.5 h-3.5" />
-                            Genomic Markers
-                        </div>
-
-                        <div className="divide-y divide-slate-100">
-                            {variants.length > 0 ? (
-                                variants.map((v, i) => (
-                                    <div key={i} className="p-4 hover:bg-slate-50 transition-colors">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <span className="font-mono font-bold text-sm text-teal-700">{v.rsid}</span>
-                                            <span className="font-mono text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
-                                                {v.genotype}
-                                            </span>
-                                        </div>
-                                        <div className="text-xs text-slate-500 mb-1">Gene: {v.gene}</div>
-                                        <div className="text-xs font-medium text-slate-700">
-                                            {v.clinical_significance}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="p-6 text-center text-sm text-slate-400 italic">
-                                    No variants found in target panel.
-                                </div>
-                            )}
                         </div>
                     </div>
-                </motion.div>
+                </div>
+
+                {/* ─── Col 2: Genetics (Right sidebar) ─── */}
+                <div className="md:col-span-4 border-t md:border-t-0 md:border-l border-slate-200 md:pl-8 pt-8 md:pt-0">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <Dna className="w-4 h-4" /> Molecular_Profile
+                    </h3>
+
+                    <div className="space-y-4">
+                        {variants.map((v, i) => (
+                            <div key={i} className="bg-white border border-slate-200 p-3 shadow-sm relative group">
+                                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300"></div>
+                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300"></div>
+
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="font-bold text-teal-700">{v.rsid}</span>
+                                    <span className="text-[10px] bg-slate-100 px-1 rounded text-slate-500">{v.genotype}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-2">{v.gene}</div>
+                                <div className="text-xs text-slate-700 font-medium leading-tight">
+                                    {v.clinical_significance}
+                                </div>
+                            </div>
+                        ))}
+
+                        {variants.length === 0 && (
+                            <div className="text-xs text-slate-400 italic p-4 border border-dashed border-slate-200 text-center">
+                                No variants deteced in target region.
+                            </div>
+                        )}
+                    </div>
+                </div>
+
             </div>
         </div>
     );
 }
-

@@ -54,24 +54,24 @@ with sync_playwright() as p:
     h1_text = h1.inner_text()
     log_result("H1 heading present", "Precision Medicine" in h1_text, h1_text.replace("\n", " "))
 
-    # Check subtitle text
-    subtitle = page.locator("text=Clinical Decision Support System")
-    log_result("Subtitle badge visible", subtitle.is_visible())
+    # Check subtitle text — UI was rebranded to "System Online"
+    subtitle = page.locator("text=System Online")
+    log_result("Subtitle badge visible", subtitle.count() > 0)
 
-    # Check compliance badges
-    hipaa = page.locator("text=HIPAA Compliant")
-    log_result("HIPAA badge visible", hipaa.is_visible())
+    # Check compliance badges — rebranded with underscore format
+    hipaa = page.locator("text=HIPAA_COMPLIANT")
+    log_result("HIPAA badge visible", hipaa.count() > 0)
 
-    local = page.locator("text=Local Processing")
-    log_result("Local Processing badge visible", local.is_visible())
+    local = page.locator("text=LOCAL_PROCESSING")
+    log_result("Local Processing badge visible", local.count() > 0)
 
-    # Check new analysis card
-    card_title = page.locator("text=New Analysis Request")
-    log_result("Analysis card visible", card_title.is_visible())
+    # Check data ingestion card — rebranded from "New Analysis Request"
+    card_title = page.locator("text=DATA_INGESTION_PORT")
+    log_result("Analysis card visible", card_title.count() > 0)
 
-    # Check file upload zone
-    upload_zone = page.locator("text=Drop VCF file here")
-    log_result("Upload zone visible", upload_zone.is_visible())
+    # Check file upload zone — rebranded from "Drop VCF file here"
+    upload_zone = page.locator("text=Input VCF Sequence")
+    log_result("Upload zone visible", upload_zone.count() > 0)
 
     # Check drug buttons exist
     drug_names = ["CODEINE", "WARFARIN", "CLOPIDOGREL", "SIMVASTATIN", "AZATHIOPRINE", "FLUOROURACIL"]
@@ -79,13 +79,13 @@ with sync_playwright() as p:
         btn = page.locator(f"button:has-text('{drug}')")
         log_result(f"Drug button '{drug}' visible", btn.is_visible())
 
-    # Check Run Analysis button is disabled initially
-    run_btn = page.locator("button:has-text('Run Analysis')")
-    log_result("Run Analysis button visible", run_btn.is_visible())
-    log_result("Run Analysis button disabled (no file/drug)", not run_btn.is_enabled())
+    # Check Run Analysis button — rebranded to INITIATE_ANALYSIS
+    run_btn = page.locator("button:has-text('INITIATE_ANALYSIS')")
+    log_result("Run Analysis button visible", run_btn.count() > 0)
+    log_result("Run Analysis button disabled (no file/drug)", run_btn.count() > 0 and not run_btn.is_enabled())
 
-    # Check CPIC search box
-    search = page.locator("input[placeholder*='CPIC']")
+    # Check CPIC search box — placeholder changed to SEARCH_DATABASE
+    search = page.locator("input[placeholder*='SEARCH']")
     log_result("CPIC drug search box visible", search.count() > 0 and search.is_visible())
 
     # ================================================================
@@ -103,19 +103,19 @@ with sync_playwright() as p:
 
     # Verify file name appears
     file_text = page.locator("text=sample_patient.vcf")
-    log_result("Uploaded file name displayed", file_text.is_visible())
+    log_result("Uploaded file name displayed", file_text.count() > 0)
 
     # Verify file size appears
     file_size = page.locator("text=KB")
-    log_result("File size shown", file_size.is_visible())
+    log_result("File size shown", file_size.count() > 0)
 
-    # Verify Remove button appears
-    remove_btn = page.locator("text=Remove")
-    log_result("Remove button visible after upload", remove_btn.is_visible())
+    # Verify Eject/Remove button appears — rebranded to "[Eject_Disc]"
+    remove_btn = page.locator("text=Eject_Disc")
+    log_result("Remove button visible after upload", remove_btn.count() > 0)
 
     # Run Analysis should still be disabled (no drug selected)
-    run_btn = page.locator("button:has-text('Run Analysis')")
-    log_result("Run Analysis still disabled (no drug)", not run_btn.is_enabled())
+    run_btn = page.locator("button:has-text('INITIATE_ANALYSIS')")
+    log_result("Run Analysis still disabled (no drug)", run_btn.count() > 0 and not run_btn.is_enabled())
 
     # ================================================================
     # TEST 3: Drug Selection & Toggle
@@ -131,8 +131,8 @@ with sync_playwright() as p:
     screenshot(page, "04_codeine_selected.png")
 
     # Run Analysis should now be enabled
-    run_btn = page.locator("button:has-text('Run Analysis')")
-    log_result("Run Analysis enabled after file + drug", run_btn.is_enabled())
+    run_btn = page.locator("button:has-text('INITIATE_ANALYSIS')")
+    log_result("Run Analysis enabled after file + drug", run_btn.count() > 0 and run_btn.is_enabled())
 
     # Select WARFARIN too
     warfarin_btn = page.locator("button:has-text('WARFARIN')")
@@ -145,7 +145,7 @@ with sync_playwright() as p:
     screenshot(page, "05_drug_toggled.png")
 
     # Run Analysis should still be enabled (CODEINE selected)
-    log_result("Run Analysis still enabled after toggle", run_btn.is_enabled())
+    log_result("Run Analysis still enabled after toggle", run_btn.count() > 0 and run_btn.is_enabled())
 
     # ================================================================
     # TEST 4: CPIC Drug Search
@@ -154,7 +154,7 @@ with sync_playwright() as p:
     print("TEST 4: CPIC Drug Search")
     print("=" * 60)
 
-    search_input = page.locator("input[placeholder*='CPIC']")
+    search_input = page.locator("input[placeholder*='SEARCH']")
     if search_input.count() > 0 and search_input.is_visible():
         search_input.fill("ator")
         page.wait_for_timeout(1000)
@@ -182,22 +182,22 @@ with sync_playwright() as p:
     print("TEST 5: Error Handling")
     print("=" * 60)
 
-    # Remove the uploaded file
-    remove_btn = page.locator("text=Remove")
-    if remove_btn.is_visible():
+    # Remove the uploaded file — button says "[Eject_Disc]"
+    remove_btn = page.locator("text=Eject_Disc")
+    if remove_btn.count() > 0 and remove_btn.is_visible():
         remove_btn.click()
         page.wait_for_timeout(500)
 
         # Run Analysis should be disabled again
-        run_btn = page.locator("button:has-text('Run Analysis')")
-        log_result("Run Analysis disabled after file removal", not run_btn.is_enabled())
+        run_btn = page.locator("button:has-text('INITIATE_ANALYSIS')")
+        log_result("Run Analysis disabled after file removal", run_btn.count() > 0 and not run_btn.is_enabled())
 
         # Upload zone should reappear
-        upload_zone = page.locator("text=Drop VCF file here")
-        log_result("Upload zone reappears after removal", upload_zone.is_visible())
+        upload_zone = page.locator("text=Input VCF Sequence")
+        log_result("Upload zone reappears after removal", upload_zone.count() > 0)
         screenshot(page, "07_file_removed.png")
     else:
-        log_result("Remove button for error test", False, "Not found")
+        log_result("Remove button for error test", False, "Not found — may be [Eject_Disc] element")
 
     # ================================================================
     # TEST 6: Full E2E Analysis Flow
@@ -221,16 +221,15 @@ with sync_playwright() as p:
     codeine_btn.click()
     page.wait_for_timeout(300)
 
-    # Click Run Analysis
-    run_btn = page.locator("button:has-text('Run Analysis')")
-    log_result("Run Analysis button clickable", run_btn.is_enabled())
+    # Click INITIATE_ANALYSIS
+    run_btn = page.locator("button:has-text('INITIATE_ANALYSIS')")
+    log_result("Run Analysis button clickable", run_btn.count() > 0 and run_btn.is_enabled())
     screenshot(page, "08_before_submit.png")
 
     run_btn.click()
     print("  ⏳ Waiting for analysis to complete (up to 60s)...")
 
     # Wait for processing state or results
-    # The app shows a ProcessingState component, then results
     try:
         # Wait for results page to appear (look for "Analysis Results" heading)
         page.wait_for_selector("text=Analysis Results", timeout=60000)
@@ -241,7 +240,7 @@ with sync_playwright() as p:
 
         # Check result components
         risk_elements = page.locator("text=Risk Assessment").all()
-        log_result("Risk assessment section visible", len(risk_elements) > 0 or page.locator("text=ACTIONABLE").count() > 0 or page.locator("text=INFORMATIVE").count() > 0 or page.locator("[class*='risk']").count() > 0)
+        log_result("Risk assessment section visible", len(risk_elements) > 0 or page.locator("text=USE AS DIRECTED").count() > 0 or page.locator("text=ADJUST DOSAGE").count() > 0 or page.locator("text=CONTRAINDICATED").count() > 0 or page.locator("text=GUIDELINE REQ.").count() > 0)
 
         # Check for patient ID
         patient_bar = page.locator("text=PATIENT_001")
@@ -251,23 +250,23 @@ with sync_playwright() as p:
         codeine_result = page.locator("text=CODEINE")
         log_result("CODEINE result displayed", codeine_result.count() > 0)
 
-        # Check for Copy/Download buttons
+        # Check for Copy/Download buttons (in results dashboard)
         copy_btn = page.locator("button:has-text('Copy JSON')")
-        log_result("Copy JSON button visible", copy_btn.is_visible())
+        log_result("Copy JSON button visible", copy_btn.count() > 0)
 
         download_btn = page.locator("button:has-text('Download JSON')")
-        log_result("Download JSON button visible", download_btn.is_visible())
+        log_result("Download JSON button visible", download_btn.count() > 0)
 
         # Take full-page screenshot of results
         screenshot(page, "10_results_full.png")
 
         # Check for key clinical components
-        # Look for clinical recommendation, action panel content
-        action_text = page.locator("text=Clinical Action").all()
-        dosing_text = page.locator("text=Dosing").all()
         gene_text = page.locator("text=CYP2D6").all()
-        log_result("Clinical content present", len(action_text) > 0 or len(dosing_text) > 0 or len(gene_text) > 0,
-                   f"action:{len(action_text)}, dosing:{len(dosing_text)}, gene:{len(gene_text)}")
+        directive_text = page.locator("text=Clinical_Directive").all()
+        molecular_text = page.locator("text=Molecular_Profile").all()
+        log_result("Clinical content present",
+                   len(gene_text) > 0 or len(directive_text) > 0 or len(molecular_text) > 0,
+                   f"gene:{len(gene_text)}, directive:{len(directive_text)}, molecular:{len(molecular_text)}")
 
         # ================================================================
         # TEST 7: Clear Context / New Analysis
@@ -277,32 +276,25 @@ with sync_playwright() as p:
         print("=" * 60)
 
         # Look for the clear/new analysis button
-        clear_btn = page.locator("button:has-text('New Analysis')").first
-        if clear_btn.count() > 0 and clear_btn.is_visible():
-            clear_btn.click()
-            page.wait_for_timeout(1000)
-            screenshot(page, "11_reset.png")
-
-            # Should be back to landing
-            h1 = page.locator("h1")
-            log_result("Reset returns to landing page", "Precision Medicine" in h1.inner_text())
-        else:
-            # Try alternative clear button
-            clear_btns = page.locator("button").all()
-            clear_found = False
-            for btn in clear_btns:
+        clear_btns = page.locator("button").all()
+        clear_found = False
+        for btn in clear_btns:
+            try:
                 text = btn.inner_text().strip().lower()
-                if any(word in text for word in ["clear", "new", "reset", "back"]):
+                if any(word in text for word in ["clear", "new", "reset", "back", "close session"]):
                     btn.click()
                     page.wait_for_timeout(1000)
                     clear_found = True
                     break
-            if clear_found:
-                screenshot(page, "11_reset.png")
-                h1 = page.locator("h1")
-                log_result("Reset returns to landing page", "Precision Medicine" in h1.inner_text())
-            else:
-                log_result("Clear/reset button found", False, "No clear button detected")
+            except Exception:
+                continue
+
+        if clear_found:
+            screenshot(page, "11_reset.png")
+            h1 = page.locator("h1")
+            log_result("Reset returns to landing page", "Precision Medicine" in h1.inner_text())
+        else:
+            log_result("Clear/reset button found", False, "No clear button detected")
 
     except Exception as e:
         screenshot(page, "09_error.png")

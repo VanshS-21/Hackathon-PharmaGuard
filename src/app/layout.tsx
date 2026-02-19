@@ -1,42 +1,26 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google"; // More clinical/professional
+import { Inter, JetBrains_Mono } from "next/font/google";
+import { Activity, Shield, Terminal, Zap } from "lucide-react";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-heading",
+// ─── Fonts ───
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-body",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "PharmaGuard | Clinical Pharmacogenomics",
-  description:
-    "Professional pharmacogenomic risk prediction system. AI-powered analysis of VCF data for personalized clinical recommendations.",
-  keywords: [
-    "pharmacogenomics",
-    "drug safety",
-    "precision medicine",
-    "clinical decision support",
-  ],
-  openGraph: {
-    title: "PharmaGuard | Clinical Pharmacogenomics",
-    description:
-      "AI-powered pharmacogenomic risk prediction. Upload VCF data, select drugs, and get CPIC-backed clinical recommendations.",
-    type: "website",
-    locale: "en_US",
-    siteName: "PharmaGuard",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "PharmaGuard | Clinical Pharmacogenomics",
-    description:
-      "AI-powered pharmacogenomic risk prediction for precision medicine.",
+  title: "PharmaGuard | Precision Protocol Interface",
+  description: "Advanced pharmacogenomic risk stratification system. Level A Clinical Decision Support.",
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
@@ -46,89 +30,67 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${jakarta.variable} ${inter.variable} antialiased`}
-        style={{
-          background: "var(--background)",
-          color: "var(--foreground)"
-        }}
-      >
-        {/* ─── Navbar ─── */}
-        <nav
-          className="fixed top-0 left-0 right-0 z-50 h-16 px-6 md:px-12 flex items-center justify-between"
-          style={{
-            background: "rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <div className="flex items-center gap-3">
-            {/* Logo Mark - Clean Science */}
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold tracking-tight"
-              style={{
-                background: "var(--accent)",
-                color: "white",
-              }}
-            >
-              PG
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased text-slate-900 bg-slate-50 selection:bg-teal-500/30 selection:text-teal-900">
+
+        {/* ─── SYSTEM CHROME ─── */}
+        <div className="fixed top-0 left-0 right-0 z-50 h-10 bg-slate-900 border-b border-slate-700 flex items-center justify-between px-4 text-[10px] font-mono text-slate-400 uppercase tracking-wider backdrop-blur-md bg-opacity-90">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 text-slate-100 font-bold">
+              <Shield className="w-3.5 h-3.5 text-teal-500" />
+              PHARMAGUARD_OS <span className="text-teal-500">v2.4.0</span>
             </div>
-            <span
-              className="text-lg font-bold tracking-tight"
-              style={{ color: "var(--text-primary)", fontFamily: "var(--font-heading)" }}
-            >
-              Pharma<span style={{ color: "var(--accent)" }}>Guard</span>
-            </span>
+            <div className="hidden md:flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+              SYSTEM_ONLINE
+            </div>
+            <div className="hidden md:flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5 text-slate-600" />
+              CPU_LOAD: 12%
+            </div>
           </div>
 
-          {/* Status pill */}
-          <div
-            className="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
-            style={{
-              color: "var(--text-secondary)",
-              background: "var(--surface-2)",
-              border: "1px solid var(--border)",
-              padding: "6px 14px",
-              borderRadius: "9999px",
-            }}
-          >
-            <span
-              className="w-2 h-2 rounded-full"
-              style={{
-                background: "var(--safe)",
-              }}
-            />
-            Research Protocol v2.4
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block">
+              SECURE_CONNECTION_ESTABLISHED
+            </div>
+            <div className="flex items-center gap-2 text-teal-500">
+              <Zap className="w-3.5 h-3.5 text-yellow-500" />
+              POWER_SAVING_OFF
+            </div>
+            <div className="pl-6 border-l border-slate-700 text-slate-300">
+              {new Date().toISOString().split('T')[0]}
+            </div>
           </div>
-        </nav>
+        </div>
 
-        {/* ─── Main Content ─── */}
-        <main className="pt-16 min-h-screen">
+        {/* ─── CORNER MARKERS (HUD) ─── */}
+        <div className="fixed top-12 left-4 w-4 h-4 border-t-2 border-l-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
+        <div className="fixed top-12 right-4 w-4 h-4 border-t-2 border-r-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
+        <div className="fixed bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
+        <div className="fixed bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
+
+        {/* ─── MAIN CONTENT ─── */}
+        <main className="pt-16 min-h-screen relative z-10">
           {children}
         </main>
 
-        {/* ─── Footer ─── */}
-        <footer
-          className="py-12 border-t"
-          style={{
-            borderColor: "var(--border)",
-            background: "var(--surface-0)",
-          }}
-        >
-          <div className="max-w-6xl mx-auto px-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-sm">
-              <p className="font-semibold text-gray-900">PharmaGuard Clinical Systems</p>
-              <p className="text-gray-500 mt-1">Precision Medicine for the Modern Clinic.</p>
+        {/* ─── FOOTER ─── */}
+        <footer className="border-t border-slate-200 bg-white/50 backdrop-blur-sm mt-auto relative z-10">
+          <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 uppercase tracking-wide">
+            <div className="flex items-center gap-2">
+              <Terminal className="w-4 h-4" />
+              <span>PharmaGuard Clinical Systems &copy; 2026</span>
             </div>
-            <p className="text-xs text-gray-400">
-              For Research Use Only. Not for diagnostic procedures without validation.
-            </p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-teal-600 transition-colors">[PRIVACY_PROTOCOL]</a>
+              <a href="#" className="hover:text-teal-600 transition-colors">[USAGE_TERMS]</a>
+              <a href="#" className="hover:text-teal-600 transition-colors">[SYSTEM_STATUS]</a>
+            </div>
           </div>
         </footer>
+
       </body>
     </html>
   );
 }
-

@@ -170,9 +170,9 @@ export default function Home() {
     }
   }, [file, selectedDrugs]);
 
-  const handleProcessingComplete = () => {
+  const handleProcessingComplete = useCallback(() => {
     setProcessing(false);
-  };
+  }, []);
 
   // --- Export: Download JSON ---
   const handleDownloadJson = () => {
@@ -255,8 +255,8 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={handleCopyJson}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+              onClick={handleCopyJson} aria-label="Copy JSON to clipboard"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200 shadow-sm"
             >
               {copied ? (
                 <><CheckCheck className="w-4 h-4 text-emerald-600" /> Copied!</>
@@ -265,8 +265,8 @@ export default function Home() {
               )}
             </button>
             <button
-              onClick={handleDownloadJson}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-sm"
+              onClick={handleDownloadJson} aria-label="Download JSON report"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-colors duration-200 shadow-sm"
             >
               <Download className="w-4 h-4" />
               Download JSON

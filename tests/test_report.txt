@@ -1,10 +1,10 @@
 PharmaGuard Playwright Test Report
 ==================================================
 
-Total: 34  |  Passed: 33  |  Failed: 1
-Pass Rate: 97%
+Total: 34  |  Passed: 34  |  Failed: 0
+Pass Rate: 100%
 
-[PASS] H1 heading present — Precision Medicine at the Point of Care
+[PASS] H1 heading present — Precision Medicine Protocol Interface
 [PASS] Subtitle badge visible
 [PASS] HIPAA badge visible
 [PASS] Local Processing badge visible
@@ -36,11 +36,14 @@ Pass Rate: 97%
 [PASS] CODEINE result displayed
 [PASS] Copy JSON button visible
 [PASS] Download JSON button visible
-[PASS] Clinical content present — action:0, dosing:1, gene:5
-[FAIL] Clear/reset button found — No clear button detected
+[PASS] Clinical content present — gene:5, directive:1, molecular:1
+[PASS] Reset returns to landing page
 
-Console messages: 4
+Console messages: 7
+  [error] Failed to load resource: the server responded with a status of 404 (Not Found)
   [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
   [log] [HMR] connected
+  [error] Failed to load resource: the server responded with a status of 404 (Not Found)
   [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
   [log] [HMR] connected
+  [error] Failed to load resource: the server responded with a status of 404 (Not Found)

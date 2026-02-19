@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CheckCircle, HelpCircle, XCircle, Shield, BookOpen } from "lucide-react";
+import { AlertTriangle, CheckCircle, HelpCircle, XCircle, Shield, BookOpen, Activity } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -14,10 +14,10 @@ interface TriageBannerProps {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-    A: "bg-emerald-100 text-emerald-800 border-emerald-300",
-    B: "bg-blue-100 text-blue-800 border-blue-300",
-    C: "bg-amber-100 text-amber-800 border-amber-300",
-    D: "bg-slate-100 text-slate-600 border-slate-300",
+    A: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    B: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    C: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    D: "bg-slate-500/10 text-slate-500 border-slate-500/20",
 };
 
 export function TriageBanner({
@@ -33,34 +33,34 @@ export function TriageBanner({
     // Default: Unknown
     let containerClass = "bg-slate-50 border-slate-200";
     let accentClass = "text-slate-500";
-    let icon = <HelpCircle className="w-8 h-8" />;
+    let icon = <HelpCircle className="w-6 h-6" />;
     let headline = "STATUS UNKNOWN";
-    let borderClass = "border-l-slate-400";
+    let statusId = "UNKNOWN";
 
     if (label.includes("safe") || label.includes("normal")) {
-        containerClass = "bg-emerald-50 border-emerald-100";
-        accentClass = "text-emerald-700";
-        borderClass = "border-l-emerald-600";
-        icon = <CheckCircle className="w-8 h-8" />;
+        containerClass = "bg-emerald-50/50 border-emerald-200";
+        accentClass = "text-emerald-600";
+        icon = <CheckCircle className="w-6 h-6" />;
         headline = "USE AS DIRECTED";
+        statusId = "SAFE";
     } else if (label.includes("guideline")) {
-        containerClass = "bg-sky-50 border-sky-100";
-        accentClass = "text-sky-700";
-        borderClass = "border-l-sky-600";
-        icon = <BookOpen className="w-8 h-8" />;
-        headline = "CPIC GUIDELINE REFERENCE";
+        containerClass = "bg-sky-50/50 border-sky-200";
+        accentClass = "text-sky-600";
+        icon = <BookOpen className="w-6 h-6" />;
+        headline = "GUIDELINE REQ.";
+        statusId = "INFO";
     } else if (label.includes("adjust") || label.includes("monitor") || label.includes("intermediate")) {
-        containerClass = "bg-amber-50 border-amber-100";
-        accentClass = "text-amber-700";
-        borderClass = "border-l-amber-600";
-        icon = <AlertTriangle className="w-8 h-8" />;
-        headline = "CAUTION — ADJUST DOSAGE";
+        containerClass = "bg-amber-50/50 border-amber-200";
+        accentClass = "text-amber-600";
+        icon = <AlertTriangle className="w-6 h-6" />;
+        headline = "ADJUST DOSAGE";
+        statusId = "WARNING";
     } else if (label.includes("toxic") || label.includes("poor") || label.includes("risk")) {
-        containerClass = "bg-red-50 border-red-100";
-        accentClass = "text-red-700";
-        borderClass = "border-l-red-600";
-        icon = <XCircle className="w-8 h-8" />;
-        headline = "HIGH RISK — DO NOT PRESCRIBE";
+        containerClass = "bg-red-50/50 border-red-200";
+        accentClass = "text-red-600";
+        icon = <XCircle className="w-6 h-6" />;
+        headline = "CONTRAINDICATED";
+        statusId = "CRITICAL";
     }
 
     const isCpic = dataSource === "CPIC API";
@@ -70,64 +70,53 @@ export function TriageBanner({
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={cn(
-                "w-full flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden border-y md:border md:rounded-t-xl p-6 md:p-8",
-                containerClass,
-                "border-l-4 md:border-l-4",
-                borderClass
+                "relative overflow-hidden border-b p-6",
+                containerClass
             )}
         >
-            {/* Icon */}
-            <div className={cn("flex-shrink-0", accentClass)}>
-                {icon}
+            <div className="absolute top-0 right-0 p-2 opacity-10">
+                <Activity className="w-32 h-32" />
             </div>
 
-            {/* Main Alert Text */}
-            <div className="flex-grow space-y-1">
-                <div className={cn("text-xs font-bold uppercase tracking-widest opacity-80", accentClass)}>
-                    {drugName} Risk Assessment
-                </div>
-                <h2 className={cn("text-2xl md:text-3xl font-bold tracking-tight", accentClass)}>
-                    {headline}
-                </h2>
-            </div>
-
-            {/* CPIC Evidence Level + Genotype */}
-            <div className="flex items-center gap-6">
-                {/* CPIC Badge */}
-                {cpicLevel && (
-                    <div className="flex flex-col items-center gap-1">
-                        <div className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-sm",
-                            levelClass
-                        )}>
-                            <Shield className="w-4 h-4" />
-                            Level {cpicLevel}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div className="flex items-start gap-4">
+                    <div className={cn("p-3 rounded border bg-white/50 backdrop-blur-sm", accentClass, containerClass)}>
+                        {icon}
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className={cn("text-[10px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border", accentClass, "bg-white/50 border-current")}>
+                                {statusId}
+                            </div>
+                            <span className="text-[10px] font-mono text-slate-400 uppercase">
+                                REF: {drugName}
+                            </span>
                         </div>
-                        <span className={cn(
-                            "text-[10px] font-semibold uppercase tracking-wider",
-                            isCpic ? "text-teal-600" : "text-slate-400"
-                        )}>
-                            {isCpic ? "CPIC Verified" : "Local Data"}
-                        </span>
+                        <h2 className={cn("text-2xl font-bold tracking-tight", accentClass)}>
+                            {headline}
+                        </h2>
                     </div>
-                )}
+                </div>
 
-                {/* Phenotype Context */}
-                <div className="hidden md:block pl-6 border-l border-black/5 min-w-[180px]">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                        Genotype
+                <div className="flex items-center gap-8 font-mono text-xs">
+                    <div>
+                        <div className="text-slate-400 uppercase text-[10px] mb-1">Genotype</div>
+                        <div className="font-bold text-slate-700 bg-white/50 px-2 py-1 rounded border border-slate-200">
+                            {gene} <span className="text-slate-400">|</span> {phenotype}
+                        </div>
                     </div>
-                    <div className="font-bold text-lg text-slate-900 leading-none mb-1">
-                        {gene}
-                    </div>
-                    <div className="text-sm font-medium text-slate-600">
-                        {phenotype}
-                    </div>
+                    {cpicLevel && (
+                        <div>
+                            <div className="text-slate-400 uppercase text-[10px] mb-1">Evidence</div>
+                            <div className={cn("font-bold px-2 py-1 rounded border", levelClass)}>
+                                LEVEL {cpicLevel}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </motion.div>
     );
 }
-
