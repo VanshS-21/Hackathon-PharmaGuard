@@ -153,8 +153,14 @@ async def assess_risk(
         except Exception as e:
             logger.warning("CPIC enrichment failed for %s: %s", drug, e)
 
-    # Filter variants for this gene
-    gene_variants = [v for v in variants if v.get("gene") == primary_gene]
+    # Filter variants for this gene — only include actual alt-carrying genotypes (0/1 or 1/1).
+    # 0/0 means homozygous reference (patient does NOT carry the variant).
+    ALT_GENOTYPES = {"0/1", "0|1", "1/0", "1|0", "1/1", "1|1"}
+    gene_variants = [
+        v for v in variants
+        if v.get("gene") == primary_gene
+        and v.get("genotype") in ALT_GENOTYPES
+    ]
 
     return {
         "risk_label": risk_label,
@@ -224,7 +230,12 @@ async def _cpic_guideline_result(
     gene_info = gene_diplotypes.get(primary_gene)
     diplotype = gene_info["diplotype"] if gene_info else "Not in panel"
     phenotype = gene_info["phenotype"] if gene_info else "Not determined"
-    gene_variants = [v for v in variants if v.get("gene") == primary_gene]
+    ALT_GENOTYPES = {"0/1", "0|1", "1/0", "1|0", "1/1", "1|1"}
+    gene_variants = [
+        v for v in variants
+        if v.get("gene") == primary_gene
+        and v.get("genotype") in ALT_GENOTYPES
+    ]
 
     # Try CPIC enrichment for recommendation
     cpic_data = {

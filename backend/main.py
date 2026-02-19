@@ -79,8 +79,8 @@ class GeneDrugResponse(BaseModel):
     drugs: list[GeneDrugPair]
 
 
-class AnalyzeResponse(BaseModel):
-    results: list[dict[str, Any]]
+# Response type for /api/analyze — bare list per the problem statement schema
+AnalyzeResponse = list[dict[str, Any]]
 
 
 # ── FastAPI App ─────────────────────────────────────────────────────
@@ -176,7 +176,7 @@ async def cpic_drugs(gene: str):
     return {"gene": gene, "drugs": pairs}
 
 
-@app.post("/api/analyze", response_model=AnalyzeResponse)
+@app.post("/api/analyze", response_model=list[dict[str, Any]])
 @limiter.limit("10/minute")
 async def analyze(
     request: Request,
@@ -225,7 +225,7 @@ async def analyze(
         raise HTTPException(status_code=422, detail="VCF parsing error. Please check your file format")
 
     # --- Process each drug ---
-    patient_id = parsed.get("patient_id", "PATIENT_UNKNOWN")
+    patient_id = parsed["patient_id"]  # Read from VCF sample column, not randomly generated
     timestamp = datetime.now(timezone.utc).isoformat()
 
     results = []
@@ -239,6 +239,15 @@ async def analyze(
             risk_result=risk_result,
             variants=parsed["variants"],
         )
+
+        # Only count variants where the patient actually carries the alt allele
+        _ALT_GENOTYPES = {"0/1", "0|1", "1/0", "1|0", "1/1", "1|1"}
+        alt_variant_count = len(
+            [v for v in parsed["variants"] if v.get("genotype") in _ALT_GENOTYPES]
+        )
+        # Fixed ordered gene list — deterministic, covers all 6 pharmacogenes
+        GENE_ORDER = ["CYP2D6", "CYP2C19", "CYP2C9", "SLCO1B1", "TPMT", "DPYD"]
+        gene_coverage = [g for g in GENE_ORDER if g in parsed["gene_diplotypes"]]
 
         result = {
             "patient_id": patient_id,
@@ -256,15 +265,14 @@ async def analyze(
                 "detected_variants": risk_result["detected_variants"],
             },
             "clinical_recommendation": risk_result["clinical_recommendation"],
-            "cpic_data": risk_result.get("cpic_data", {}),
             "llm_generated_explanation": explanation,
             "quality_metrics": {
                 "vcf_parsing_success": True,
-                "variants_detected_count": len(parsed["variants"]),
-                "gene_coverage": list(parsed["gene_diplotypes"].keys()),
+                "variants_detected_count": alt_variant_count,
+                "gene_coverage": gene_coverage,
                 "analysis_timestamp": timestamp,
             },
         }
         results.append(result)
 
-    return {"results": results}
+    return results

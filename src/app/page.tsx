@@ -2,12 +2,19 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Download, Copy, CheckCheck } from "lucide-react";
+import { Download, Copy, CheckCheck, History } from "lucide-react";
 import { LandingHero } from "@/components/LandingHero";
 import { PatientContextBar } from "@/components/PatientContextBar";
 import { TriageBanner } from "@/components/TriageBanner";
 import { ActionPanel } from "@/components/ActionPanel";
 import { ProcessingState } from "@/components/ui/ProcessingState";
+import { PatientHistory, type HistoryEntry } from "@/components/PatientHistory";
+
+export interface PatientInfo {
+  name: string;
+  dob: string;
+  age: number | null;
+}
 
 // --- Types ---
 interface DetectedVariant {
@@ -92,10 +99,12 @@ export default function Home() {
   const [selectedDrugs, setSelectedDrugs] = useState<string[]>([]);
   const [results, setResults] = useState<DrugResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const [processing, setProcessing] = useState(false); // New Processing State
+  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [cpicDrugs, setCpicDrugs] = useState<CpicDrug[]>([]);
+  const [patientInfo, setPatientInfo] = useState<PatientInfo>({ name: "", dob: "", age: null });
+  const [showHistory, setShowHistory] = useState(false);
 
   // Fetch CPIC Level A drugs on mount — with cleanup to prevent stale data
   useEffect(() => {
@@ -159,16 +168,30 @@ export default function Home() {
       }
 
       const data = await res.json();
-      // Wait for visuals to finish before showing
       setResults(data.results);
-      // Processing state will be turned off by the callback on ProcessingState component
+
+      // Save to patient history (patient info stays client-side only)
+      try {
+        const history: HistoryEntry[] = JSON.parse(localStorage.getItem("pharmaguard-history") || "[]");
+        history.unshift({
+          id: crypto.randomUUID(),
+          patientName: patientInfo.name || "Anonymous",
+          patientDob: patientInfo.dob,
+          timestamp: new Date().toISOString(),
+          drugsAnalysed: [...selectedDrugs],
+          results: data.results,
+        });
+        // Keep last 20 entries
+        localStorage.setItem("pharmaguard-history", JSON.stringify(history.slice(0, 20)));
+      } catch { /* localStorage full or unavailable — silently skip */ }
+
       setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);
       setProcessing(false);
     }
-  }, [file, selectedDrugs]);
+  }, [file, selectedDrugs, patientInfo]);
 
   const handleProcessingComplete = useCallback(() => {
     setProcessing(false);
@@ -215,6 +238,15 @@ export default function Home() {
     setLoading(false);
     setProcessing(false);
     setCopied(false);
+    setPatientInfo({ name: "", dob: "", age: null });
+  }, []);
+
+  // --- Load from history ---
+  const handleLoadHistory = useCallback((entry: HistoryEntry) => {
+    setResults(entry.results);
+    setPatientInfo({ name: entry.patientName, dob: entry.patientDob, age: null });
+    setProcessing(false);
+    setShowHistory(false);
   }, []);
 
   // --- Render: Processing State ---
@@ -225,17 +257,27 @@ export default function Home() {
   // --- Render: Landing Page State ---
   if (results.length === 0) {
     return (
-      <LandingHero
-        file={file}
-        onFileChange={handleFileChange}
-        selectedDrugs={selectedDrugs}
-        onDrugToggle={toggleDrug}
-        onAnalyze={handleSubmit}
-        loading={loading}
-        error={error}
-        supportedDrugs={FEATURED_DRUGS}
-        cpicDrugs={cpicDrugs}
-      />
+      <>
+        <LandingHero
+          file={file}
+          onFileChange={handleFileChange}
+          selectedDrugs={selectedDrugs}
+          onDrugToggle={toggleDrug}
+          onAnalyze={handleSubmit}
+          loading={loading}
+          error={error}
+          supportedDrugs={FEATURED_DRUGS}
+          cpicDrugs={cpicDrugs}
+          patientInfo={patientInfo}
+          onPatientInfoChange={setPatientInfo}
+          onShowHistory={() => setShowHistory(true)}
+        />
+        <PatientHistory
+          open={showHistory}
+          onClose={() => setShowHistory(false)}
+          onLoad={handleLoadHistory}
+        />
+      </>
     );
   }
 
@@ -244,6 +286,8 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 pb-20">
       <PatientContextBar
         patientId={results[0]?.patient_id || "Unknown"}
+        patientName={patientInfo.name}
+        patientDob={patientInfo.dob}
         onClear={handleClearContext}
       />
 

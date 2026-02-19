@@ -10,6 +10,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { DnaHelix } from "@/components/ui/DnaHelix";
+import type { PatientInfo } from "@/app/page";
 
 interface CpicDrug {
     drugname: string;
@@ -30,6 +31,9 @@ interface LandingHeroProps {
     error: string | null;
     supportedDrugs: string[];
     cpicDrugs: CpicDrug[];
+    patientInfo: PatientInfo;
+    onPatientInfoChange: (info: PatientInfo) => void;
+    onShowHistory: () => void;
 }
 
 const DRUG_ICONS: Record<string, React.ReactNode> = {
@@ -51,6 +55,9 @@ export function LandingHero({
     error,
     supportedDrugs,
     cpicDrugs,
+    patientInfo,
+    onPatientInfoChange,
+    onShowHistory,
 }: LandingHeroProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
@@ -197,12 +204,64 @@ export function LandingHero({
                             <Binary className="w-4 h-4 text-slate-400" />
                             New Analysis
                         </h3>
-                        <div className="text-[10px] font-mono text-slate-400">
-                            ID: {formId.replace(/:/g, "").toUpperCase().slice(0, 9)}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={onShowHistory}
+                                className="text-[10px] font-mono text-teal-600 hover:text-teal-700 underline underline-offset-2 decoration-dotted"
+                            >
+                                View history
+                            </button>
+                            <div className="text-[10px] font-mono text-slate-400">
+                                ID: {formId.replace(/:/g, "").toUpperCase().slice(0, 9)}
+                            </div>
                         </div>
                     </div>
 
                     <div className="p-6 md:p-8 space-y-8 bg-white/40">
+                        {/* Patient Details */}
+                        <div className="space-y-4">
+                            <label className="text-xs font-bold text-slate-900 flex items-center justify-between font-mono uppercase">
+                                <span>Patient details</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-500">Optional</span>
+                            </label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="sm:col-span-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Full name"
+                                        value={patientInfo.name}
+                                        onChange={(e) => onPatientInfoChange({ ...patientInfo, name: e.target.value })}
+                                        className="w-full px-3 py-2 text-sm font-mono border border-slate-300 bg-white focus:border-teal-400 focus:ring-1 focus:ring-teal-400 outline-none transition-colors placeholder:text-slate-400"
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="date"
+                                        value={patientInfo.dob}
+                                        onChange={(e) => {
+                                            const dob = e.target.value;
+                                            let age: number | null = null;
+                                            if (dob) {
+                                                const diff = Date.now() - new Date(dob).getTime();
+                                                age = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+                                            }
+                                            onPatientInfoChange({ ...patientInfo, dob, age });
+                                        }}
+                                        className="w-full px-3 py-2 text-sm font-mono border border-slate-300 bg-white focus:border-teal-400 focus:ring-1 focus:ring-teal-400 outline-none transition-colors text-slate-700"
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        value={patientInfo.age !== null ? `${patientInfo.age} years` : ""}
+                                        placeholder="Age"
+                                        className="w-full px-3 py-2 text-sm font-mono border border-slate-200 bg-slate-50 text-slate-500 cursor-default placeholder:text-slate-400"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Step 1 */}
                         <div className="space-y-4">
                             <label className="text-xs font-bold text-slate-900 flex items-center justify-between font-mono uppercase">

@@ -5,11 +5,15 @@ import { motion } from "motion/react";
 
 interface PatientContextBarProps {
     patientId: string;
+    patientName?: string;
+    patientDob?: string;
     onClear: () => void;
 }
 
 export function PatientContextBar({
     patientId,
+    patientName,
+    patientDob,
     onClear,
 }: PatientContextBarProps) {
     return (
@@ -31,16 +35,24 @@ export function PatientContextBar({
                     <div className="h-4 w-px bg-slate-300 hidden md:block" />
 
                     <div className="hidden md:flex items-center gap-6 text-sm">
+                        {patientName && (
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-slate-400" />
+                                <span className="font-semibold text-slate-900">{patientName}</span>
+                            </div>
+                        )}
                         <div className="flex items-center gap-2">
                             <User className="w-4 h-4 text-slate-400" />
                             <span className="text-slate-500">Patient ID:</span>
                             <span className="font-mono font-semibold text-slate-900">{patientId}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-slate-400" />
-                            <span className="text-slate-500">DOB:</span>
-                            <span className="font-mono font-medium text-slate-700">1980-05-14</span>
-                        </div>
+                        {patientDob && (
+                            <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-slate-400" />
+                                <span className="text-slate-500">DOB:</span>
+                                <span className="font-mono font-medium text-slate-700">{patientDob}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 

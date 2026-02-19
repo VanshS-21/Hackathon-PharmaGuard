@@ -53,7 +53,11 @@ async def generate_explanation(
     risk_label = risk_result.get("risk_label", "Unknown")
     severity = risk_result.get("severity", "Unknown")
 
-    gene_variants = [v for v in variants if v.get("gene") == gene]
+    _ALT_GENOTYPES = {"0/1", "0|1", "1/0", "1|0", "1/1", "1|1"}
+    gene_variants = [
+        v for v in variants
+        if v.get("gene") == gene and v.get("genotype") in _ALT_GENOTYPES
+    ]
     variant_details = ""
     for v in gene_variants:
         variant_details += (

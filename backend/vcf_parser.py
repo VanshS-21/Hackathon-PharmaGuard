@@ -47,19 +47,23 @@ STAR_ALLELE_FUNCTION: dict[tuple[str, str], str] = _load_star_allele_functions()
 
 
 
-def _parse_info_field(info_str: str) -> dict[str, str]:
+def _parse_info_field(info_str: str) -> tuple[dict[str, str], dict[str, str]]:
     """
-    Parse VCF INFO field into a dict.
+    Parse VCF INFO field into two dicts:
+      - info_upper: keys AND values uppercased (for case-insensitive matching of GENE, STAR, etc.)
+      - info_raw: keys uppercased, values kept in ORIGINAL case (for RS rsid, to preserve lowercase)
     Rule 4: Split by ";", then "=". Strip whitespace.
-    Convert ALL keys AND values to UPPERCASE.
     Ignore tags without "=".
     """
-    info = {}
+    info_upper = {}
+    info_raw = {}
     for item in info_str.split(";"):
         if "=" in item:
             key, value = item.split("=", 1)
-            info[key.strip().upper()] = value.strip().upper()
-    return info
+            k = key.strip().upper()
+            info_upper[k] = value.strip().upper()
+            info_raw[k] = value.strip()  # original case preserved
+    return info_upper, info_raw
 
 
 def _get_function(gene: str, star_allele: str) -> str:
@@ -165,12 +169,14 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
             continue
 
         # Rule 4: Parse INFO — split by ";", then "=", uppercase keys+values
-        info = _parse_info_field(info_str)
+        # info_upper: uppercased values (for GENE, STAR matching)
+        # info_raw: original-case values (for RS rsid — must stay lowercase)
+        info_upper, info_raw = _parse_info_field(info_str)
 
         # Rule 5: Extract GENE, STAR, RS
-        gene = info.get("GENE", "")
-        star_allele = info.get("STAR", "")
-        rs_from_info = info.get("RS", "")
+        gene = info_upper.get("GENE", "")
+        star_allele = info_upper.get("STAR", "")
+        rs_from_info = info_raw.get("RS", "")  # preserve lowercase (e.g. rs28371725)
 
         # Rule 5: GENE not found or empty → skip this line
         if not gene:
@@ -181,10 +187,11 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
             star_allele = "UNKNOWN"
 
         # Rule 5: RS not found → use ID column; if ID is also "." → use "."
+        # Always force lowercase for rsid (schema requires lowercase rs prefix)
         if rs_from_info:
-            rsid = rs_from_info
+            rsid = rs_from_info.lower()
         elif rsid_col and rsid_col != ".":
-            rsid = rsid_col
+            rsid = rsid_col.lower()
         else:
             rsid = "."
 
@@ -192,10 +199,9 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
         if gene not in PHARMACO_GENES:
             continue
 
-        # Rule 6: Max 2 variants per gene — first 2 by appearance order
+        # Count variants per gene for tracking (no hard cap — all variants must be visible
+        # to the risk engine so it can filter for alt-carrying genotypes downstream)
         gene_variant_count[gene] = gene_variant_count.get(gene, 0) + 1
-        if gene_variant_count[gene] > 2:
-            continue
 
         # ── Build variant entry ──
         # Extract genotype from FORMAT + sample columns (if available)
@@ -239,12 +245,17 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
         }
         variants.append(variant_entry)
 
-        # Track star alleles for diplotype calling
-        if is_hom_alt and star_allele:
-            gene_star_alleles[gene].append(star_allele)
-            gene_star_alleles[gene].append(star_allele)
-        elif is_het and star_allele:
-            gene_star_alleles[gene].append(star_allele)
+        # Track star alleles for diplotype calling — ONLY include alleles that
+        # actually alter function. Normal-function variants (e.g. CYP2D6*2 is
+        # Benign/synonymous with normal_function) must NOT shift the diplotype.
+        # Only no_function / decreased_function / increased_function count.
+        FUNCTION_ALTERING = {"no_function", "decreased_function", "increased_function"}
+        if allele_function in FUNCTION_ALTERING:
+            if is_hom_alt and star_allele:
+                gene_star_alleles[gene].append(star_allele)
+                gene_star_alleles[gene].append(star_allele)
+            elif is_het and star_allele:
+                gene_star_alleles[gene].append(star_allele)
 
     # ── Rule 7: Final check — reject only if zero variants ──
     if len(variants) == 0:
