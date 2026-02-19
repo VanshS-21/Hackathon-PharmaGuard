@@ -1,0 +1,280 @@
+{
+    "_metadata": {
+        "description": "PharmaGuard drug rules — maps drug to primary gene and phenotype risk categories",
+        "source": "CPIC (Clinical Pharmacogenetics Implementation Consortium)",
+        "risk_labels": [
+            "Safe",
+            "Adjust Dosage",
+            "Ineffective",
+            "Toxic"
+        ],
+        "phenotype_codes": [
+            "NM",
+            "IM",
+            "PM",
+            "RM",
+            "URM"
+        ],
+        "last_updated": "2026-02-19"
+    },
+    "CODEINE": {
+        "gene": "CYP2D6",
+        "phenotype_risk": {
+            "PM": "Ineffective",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Toxic"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate",
+            "Ineffective": "high",
+            "Toxic": "critical"
+        },
+        "recommendations": {
+            "Ineffective": {
+                "action": "Use alternative drug",
+                "dosing_guidance": "Avoid codeine — patient cannot convert to morphine",
+                "alternative_drugs": [
+                    "morphine",
+                    "oxycodone",
+                    "non-opioid analgesics"
+                ],
+                "monitoring": "Monitor for pain relief with alternative agent",
+                "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)"
+            },
+            "Adjust Dosage": {
+                "action": "Use with caution at reduced dose or consider alternative",
+                "dosing_guidance": "Reduced codeine metabolism expected; consider 25-50% dose reduction or alternative",
+                "alternative_drugs": [
+                    "morphine",
+                    "non-opioid analgesics"
+                ],
+                "monitoring": "Monitor closely for lack of efficacy",
+                "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing per label",
+                "alternative_drugs": [],
+                "monitoring": "Routine monitoring",
+                "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)"
+            },
+            "Toxic": {
+                "action": "Avoid — life-threatening toxicity risk",
+                "dosing_guidance": "Do NOT use codeine — ultrarapid conversion to morphine causes respiratory depression",
+                "alternative_drugs": [
+                    "non-opioid analgesics",
+                    "acetaminophen"
+                ],
+                "monitoring": "If inadvertently given, monitor for respiratory depression",
+                "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)"
+            }
+        }
+    },
+    "WARFARIN": {
+        "gene": "CYP2C9",
+        "phenotype_risk": {
+            "PM": "Adjust Dosage",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Adjust Dosage"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate"
+        },
+        "recommendations": {
+            "Adjust Dosage": {
+                "action": "Reduce dose",
+                "dosing_guidance": "Reduce initial warfarin dose by 25-50% based on CYP2C9 status",
+                "alternative_drugs": [
+                    "direct oral anticoagulants (DOACs)"
+                ],
+                "monitoring": "Frequent INR monitoring, especially during initiation",
+                "cpic_guideline": "CPIC Guideline for Warfarin and CYP2C9/VKORC1 (2017)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing with routine INR monitoring",
+                "alternative_drugs": [],
+                "monitoring": "Routine INR monitoring",
+                "cpic_guideline": "CPIC Guideline for Warfarin and CYP2C9/VKORC1 (2017)"
+            }
+        }
+    },
+    "CLOPIDOGREL": {
+        "gene": "CYP2C19",
+        "phenotype_risk": {
+            "PM": "Ineffective",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Safe"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate",
+            "Ineffective": "high"
+        },
+        "recommendations": {
+            "Ineffective": {
+                "action": "Use alternative antiplatelet",
+                "dosing_guidance": "Avoid clopidogrel — patient cannot activate the prodrug",
+                "alternative_drugs": [
+                    "prasugrel",
+                    "ticagrelor"
+                ],
+                "monitoring": "Monitor for cardiovascular events on alternative therapy",
+                "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)"
+            },
+            "Adjust Dosage": {
+                "action": "Consider alternative or increased dose",
+                "dosing_guidance": "Reduced activation expected; consider prasugrel/ticagrelor or increased clopidogrel dose",
+                "alternative_drugs": [
+                    "prasugrel",
+                    "ticagrelor"
+                ],
+                "monitoring": "Monitor for cardiovascular events and platelet function",
+                "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing per label",
+                "alternative_drugs": [],
+                "monitoring": "Routine monitoring",
+                "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)"
+            }
+        }
+    },
+    "SIMVASTATIN": {
+        "gene": "SLCO1B1",
+        "phenotype_risk": {
+            "PM": "Toxic",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Safe"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate",
+            "Toxic": "critical"
+        },
+        "recommendations": {
+            "Toxic": {
+                "action": "Use alternative statin or lower dose",
+                "dosing_guidance": "Avoid simvastatin >20mg — high risk of myopathy/rhabdomyolysis",
+                "alternative_drugs": [
+                    "pravastatin",
+                    "rosuvastatin"
+                ],
+                "monitoring": "Monitor CK levels; report muscle pain/weakness immediately",
+                "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)"
+            },
+            "Adjust Dosage": {
+                "action": "Lower dose or use alternative",
+                "dosing_guidance": "Limit simvastatin to ≤20mg daily or switch to pravastatin/rosuvastatin",
+                "alternative_drugs": [
+                    "pravastatin",
+                    "rosuvastatin"
+                ],
+                "monitoring": "Monitor for muscle symptoms and CK levels",
+                "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing per label",
+                "alternative_drugs": [],
+                "monitoring": "Routine lipid panel monitoring",
+                "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)"
+            }
+        }
+    },
+    "AZATHIOPRINE": {
+        "gene": "TPMT",
+        "phenotype_risk": {
+            "PM": "Toxic",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Safe"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate",
+            "Toxic": "critical"
+        },
+        "recommendations": {
+            "Toxic": {
+                "action": "Drastically reduce dose or avoid",
+                "dosing_guidance": "Reduce dose by 90% or avoid azathioprine — severe myelosuppression risk",
+                "alternative_drugs": [
+                    "mycophenolate mofetil"
+                ],
+                "monitoring": "Frequent CBC with differential; monitor for myelosuppression",
+                "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)"
+            },
+            "Adjust Dosage": {
+                "action": "Reduce initial dose",
+                "dosing_guidance": "Start at 30-70% of standard dose; titrate based on tolerance",
+                "alternative_drugs": [
+                    "mycophenolate mofetil"
+                ],
+                "monitoring": "CBC weekly for first month, then biweekly",
+                "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing per label",
+                "alternative_drugs": [],
+                "monitoring": "Routine CBC monitoring",
+                "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)"
+            }
+        }
+    },
+    "FLUOROURACIL": {
+        "gene": "DPYD",
+        "phenotype_risk": {
+            "PM": "Toxic",
+            "IM": "Adjust Dosage",
+            "NM": "Safe",
+            "RM": "Safe",
+            "URM": "Safe"
+        },
+        "severity": {
+            "Safe": "none",
+            "Adjust Dosage": "moderate",
+            "Toxic": "critical"
+        },
+        "recommendations": {
+            "Toxic": {
+                "action": "Avoid or drastically reduce dose",
+                "dosing_guidance": "Avoid 5-FU — high risk of fatal toxicity due to DPD deficiency",
+                "alternative_drugs": [
+                    "non-fluoropyrimidine regimens"
+                ],
+                "monitoring": "If used, monitor for severe mucositis, myelosuppression, neurotoxicity",
+                "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)"
+            },
+            "Adjust Dosage": {
+                "action": "Reduce initial dose",
+                "dosing_guidance": "Start at 25-50% of standard dose; titrate based on tolerance",
+                "alternative_drugs": [
+                    "non-fluoropyrimidine regimens"
+                ],
+                "monitoring": "Close monitoring for mucositis, myelosuppression",
+                "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)"
+            },
+            "Safe": {
+                "action": "Use as directed",
+                "dosing_guidance": "Standard dosing per label",
+                "alternative_drugs": [],
+                "monitoring": "Routine monitoring for fluoropyrimidine toxicity",
+                "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)"
+            }
+        }
+    }
+}

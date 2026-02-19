@@ -1,0 +1,46 @@
+PharmaGuard Playwright Test Report
+==================================================
+
+Total: 34  |  Passed: 33  |  Failed: 1
+Pass Rate: 97%
+
+[PASS] H1 heading present — Precision Medicine at the Point of Care
+[PASS] Subtitle badge visible
+[PASS] HIPAA badge visible
+[PASS] Local Processing badge visible
+[PASS] Analysis card visible
+[PASS] Upload zone visible
+[PASS] Drug button 'CODEINE' visible
+[PASS] Drug button 'WARFARIN' visible
+[PASS] Drug button 'CLOPIDOGREL' visible
+[PASS] Drug button 'SIMVASTATIN' visible
+[PASS] Drug button 'AZATHIOPRINE' visible
+[PASS] Drug button 'FLUOROURACIL' visible
+[PASS] Run Analysis button visible
+[PASS] Run Analysis button disabled (no file/drug)
+[PASS] CPIC drug search box visible
+[PASS] Uploaded file name displayed
+[PASS] File size shown
+[PASS] Remove button visible after upload
+[PASS] Run Analysis still disabled (no drug)
+[PASS] Run Analysis enabled after file + drug
+[PASS] Run Analysis still enabled after toggle
+[PASS] CPIC search dropdown appears
+[PASS] Search results found — 1 results
+[PASS] Run Analysis disabled after file removal
+[PASS] Upload zone reappears after removal
+[PASS] Run Analysis button clickable
+[PASS] Analysis results page rendered
+[PASS] Risk assessment section visible
+[PASS] Patient ID displayed in context bar
+[PASS] CODEINE result displayed
+[PASS] Copy JSON button visible
+[PASS] Download JSON button visible
+[PASS] Clinical content present — action:0, dosing:1, gene:5
+[FAIL] Clear/reset button found — No clear button detected
+
+Console messages: 4
+  [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+  [log] [HMR] connected
+  [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+  [log] [HMR] connected

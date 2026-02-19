@@ -2,6 +2,8 @@
 LLM Service — Generates clinical explanations using Google Gemini API.
 """
 
+import json
+import logging
 import os
 from typing import Any
 
@@ -9,6 +11,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 # Configure Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
@@ -86,8 +89,6 @@ Generate a JSON response with: summary, mechanism, evidence_level, references.""
         response = await model.generate_content_async(prompt)
 
         # Parse the response text as JSON
-        import json
-
         text = response.text.strip()
         # Remove potential markdown code block wrapping
         if text.startswith("```"):
@@ -108,7 +109,7 @@ Generate a JSON response with: summary, mechanism, evidence_level, references.""
         }
 
     except Exception as e:
-        # Fallback: generate a deterministic explanation without LLM
+        logger.warning("LLM explanation failed for %s: %s", drug, e)
         return _fallback_explanation(drug, risk_result, gene_variants)
 
 

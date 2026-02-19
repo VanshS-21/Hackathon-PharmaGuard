@@ -9,53 +9,42 @@ Design Guidelines:
   - All INFO keys and values are uppercased for case-insensitive matching
 """
 
+import json
+import os
+import logging
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 # Genes we care about
 PHARMACO_GENES = {"CYP2D6", "CYP2C19", "CYP2C9", "SLCO1B1", "TPMT", "DPYD"}
 
-# Star allele function mapping (simplified for MVP)
+
+def _load_star_allele_functions() -> dict[tuple[str, str], str]:
+    """Load star allele → function map from variant_database.json."""
+    db_path = os.path.join(os.path.dirname(__file__), "variant_database.json")
+    try:
+        with open(db_path, "r") as f:
+            data = json.load(f)
+        raw = data.get("_star_allele_functions", {})
+        result: dict[tuple[str, str], str] = {}
+        for key, func in raw.items():
+            if key.startswith("_"):
+                continue
+            parts = key.split(":", 1)
+            if len(parts) == 2:
+                result[(parts[0], parts[1])] = func
+        logger.info("Loaded %d star allele functions from variant_database.json", len(result))
+        return result
+    except Exception as e:
+        logger.warning("Failed to load variant_database.json: %s — using built-in defaults", e)
+        return {}
+
+
+# Star allele function mapping — loaded from variant_database.json
 # Maps (gene, star_allele) -> function
-STAR_ALLELE_FUNCTION: dict[tuple[str, str], str] = {
-    # CYP2D6
-    ("CYP2D6", "*1"): "normal_function",
-    ("CYP2D6", "*2"): "normal_function",
-    ("CYP2D6", "*3"): "no_function",
-    ("CYP2D6", "*4"): "no_function",
-    ("CYP2D6", "*5"): "no_function",
-    ("CYP2D6", "*6"): "no_function",
-    ("CYP2D6", "*9"): "decreased_function",
-    ("CYP2D6", "*10"): "decreased_function",
-    ("CYP2D6", "*17"): "decreased_function",
-    ("CYP2D6", "*41"): "decreased_function",
-    ("CYP2D6", "*1XN"): "increased_function",
-    ("CYP2D6", "*2XN"): "increased_function",
-    # CYP2C19
-    ("CYP2C19", "*1"): "normal_function",
-    ("CYP2C19", "*2"): "no_function",
-    ("CYP2C19", "*3"): "no_function",
-    ("CYP2C19", "*17"): "increased_function",
-    # CYP2C9
-    ("CYP2C9", "*1"): "normal_function",
-    ("CYP2C9", "*2"): "decreased_function",
-    ("CYP2C9", "*3"): "no_function",
-    ("CYP2C9", "*6"): "no_function",
-    # SLCO1B1
-    ("SLCO1B1", "*1"): "normal_function",
-    ("SLCO1B1", "*5"): "decreased_function",
-    ("SLCO1B1", "*15"): "decreased_function",
-    ("SLCO1B1", "*17"): "decreased_function",
-    # TPMT
-    ("TPMT", "*1"): "normal_function",
-    ("TPMT", "*2"): "no_function",
-    ("TPMT", "*3A"): "no_function",
-    ("TPMT", "*3B"): "no_function",
-    ("TPMT", "*3C"): "no_function",
-    # DPYD
-    ("DPYD", "*1"): "normal_function",
-    ("DPYD", "*2A"): "no_function",
-    ("DPYD", "*13"): "no_function",
-}
+STAR_ALLELE_FUNCTION: dict[tuple[str, str], str] = _load_star_allele_functions()
+
 
 
 def _parse_info_field(info_str: str) -> dict[str, str]:
@@ -130,6 +119,10 @@ def parse_vcf(vcf_text: str) -> dict[str, Any]:
         { "patient_id": str, "variants": [...], "gene_diplotypes": {...} }
     """
     lines = vcf_text.strip().split("\n")
+
+    # ── CHECK 3: Line 1 must be ##fileformat=VCFv4.2 (VCF standard) ──
+    if not lines or not lines[0].strip().startswith("##fileformat=VCFv4.2"):
+        raise ValueError("Not a valid VCF v4.2 file")
 
     # ── Extract patient ID from #CHROM header (if FORMAT + sample cols exist) ──
     patient_id = "PATIENT_UNKNOWN"

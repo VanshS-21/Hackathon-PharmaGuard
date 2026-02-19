@@ -1,0 +1,145 @@
+=== STAR ALLELE FUNCTIONS ===
+
+CYP2D6 (12 entries):
+  OK       *1    : ours=normal_function           cpic=normal function
+  OK       *10   : ours=decreased_function        cpic=decreased function
+  OK       *17   : ours=decreased_function        cpic=decreased function
+  MISMATCH *1XN  : ours=increased_function        cpic=NOT_FOUND
+  OK       *2    : ours=normal_function           cpic=normal function
+  MISMATCH *2XN  : ours=increased_function        cpic=NOT_FOUND
+  OK       *3    : ours=no_function               cpic=no function
+  OK       *4    : ours=no_function               cpic=no function
+  OK       *41   : ours=decreased_function        cpic=decreased function
+  OK       *5    : ours=no_function               cpic=no function
+  OK       *6    : ours=no_function               cpic=no function
+  OK       *9    : ours=decreased_function        cpic=decreased function
+
+CYP2C19 (4 entries):
+  OK       *1    : ours=normal_function           cpic=normal function
+  OK       *17   : ours=increased_function        cpic=increased function
+  OK       *2    : ours=no_function               cpic=no function
+  OK       *3    : ours=no_function               cpic=no function
+
+CYP2C9 (4 entries):
+  OK       *1    : ours=normal_function           cpic=normal function
+  OK       *2    : ours=decreased_function        cpic=decreased function
+  OK       *3    : ours=no_function               cpic=no function
+  OK       *6    : ours=no_function               cpic=no function
+
+SLCO1B1 (4 entries):
+  OK       *1    : ours=normal_function           cpic=normal function
+  MISMATCH *15   : ours=decreased_function        cpic=no function
+  MISMATCH *17   : ours=decreased_function        cpic=NOT_FOUND
+  MISMATCH *5    : ours=decreased_function        cpic=no function
+
+TPMT (5 entries):
+  OK       *1    : ours=normal_function           cpic=normal function
+  OK       *2    : ours=no_function               cpic=no function
+  OK       *3A   : ours=no_function               cpic=no function
+  OK       *3B   : ours=no_function               cpic=no function
+  OK       *3C   : ours=no_function               cpic=no function
+
+DPYD (3 entries):
+  MISMATCH *1    : ours=normal_function           cpic=NOT_FOUND
+  MISMATCH *13   : ours=no_function               cpic=NOT_FOUND
+  MISMATCH *2A   : ours=no_function               cpic=NOT_FOUND
+
+Star allele totals: 24 OK, 8 mismatches
+
+=== RSID ENTRIES ===
+  CYP2D6 rs3892097: star=*4, effect=loss_of_function
+  CYP2D6 rs1065852: star=*10, effect=reduced_function
+  CYP2C19 rs4244285: star=*2, effect=loss_of_function
+  CYP2C19 rs4986893: star=*3, effect=loss_of_function
+  CYP2C19 rs12248560: star=*17, effect=increased_function
+  CYP2C9 rs1799853: star=*2, effect=reduced_function
+  CYP2C9 rs1057910: star=*3, effect=loss_of_function
+  SLCO1B1 rs4149056: star=*5, effect=reduced_function
+  TPMT rs1142345: star=*3A, effect=loss_of_function
+  DPYD rs3918290: star=*2A, effect=loss_of_function
+
+=== DRUG-GENE CPIC LEVELS ===
+  CODEINE         - CYP2D6  : Level A
+  WARFARIN        - CYP2C9  : Level A
+  CLOPIDOGREL     - CYP2C19 : Level A
+  SIMVASTATIN     - SLCO1B1 : Level A
+  AZATHIOPRINE    - TPMT    : Level A
+  FLUOROURACIL    - DPYD    : Level A
+
+=== CPIC LEVEL A DRUGS WE ARE MISSING ===
+  abacavir                  - HLA-B      (HLA-B and Abacavir)
+  allopurinol               - HLA-B      (HLA-B and Allopurinol)
+  amikacin                  - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  amitriptyline             - CYP2C19    (CYP2D6, CYP2C19 and Tricyclic Antidepressants)
+  atazanavir                - UGT1A1     (UGT1A1 and Atazanavir)
+  atomoxetine               - CYP2D6     (CYP2D6 and Atomoxetine)
+  atorvastatin              - SLCO1B1    (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  capecitabine              - DPYD       (DPYD and Fluoropyrimidines)
+  carbamazepine             - HLA-A      (HLA-A, HLA-B and Carbamazepine and Oxcarbazepine)
+  celecoxib                 - CYP2C9     (CYP2C9 and NSAIDs)
+  citalopram                - CYP2C19    (CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and Serotonin Reuptake Inhibitor Antidepressants)
+  dapsone                   - G6PD       (G6PD)
+  desflurane                - CACNA1S    (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  dibekacin                 - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  efavirenz                 - CYP2B6     (CYP2B6 and efavirenz)
+  enflurane                 - RYR1       (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  escitalopram              - CYP2C19    (CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and Serotonin Reuptake Inhibitor Antidepressants)
+  flurbiprofen              - CYP2C9     (CYP2C9 and NSAIDs)
+  fluvastatin               - CYP2C9     (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  fosphenytoin              - CYP2C9     (CYP2C9, HLA-B and Phenytoin)
+  gentamicin                - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  halothane                 - RYR1       (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  hydralazine               - NAT2       (NAT2 and Hydralazine)
+  ibuprofen                 - CYP2C9     (CYP2C9 and NSAIDs)
+  irinotecan                - UGT1A1     (None)
+  isoflurane                - CACNA1S    (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  ivacaftor                 - CFTR       (CFTR and Ivacaftor)
+  kanamycin                 - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  lansoprazole              - CYP2C19    (CYP2C19 and Proton Pump Inhibitors)
+  lornoxicam                - CYP2C9     (CYP2C9 and NSAIDs)
+  lovastatin                - SLCO1B1    (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  meloxicam                 - CYP2C9     (CYP2C9 and NSAIDs)
+  mercaptopurine            - NUDT15     (TPMT, NUDT15 and Thiopurines)
+  methoxyflurane            - RYR1       (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  methylene blue            - G6PD       (G6PD)
+  neomycin                  - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  netilmicin                - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  nitrofurantoin            - G6PD       (G6PD)
+  nortriptyline             - CYP2D6     (CYP2D6, CYP2C19 and Tricyclic Antidepressants)
+  omeprazole                - CYP2C19    (CYP2C19 and Proton Pump Inhibitors)
+  ondansetron               - CYP2D6     (CYP2D6 and Ondansetron and Tropisetron)
+  oxcarbazepine             - HLA-B      (HLA-A, HLA-B and Carbamazepine and Oxcarbazepine)
+  pantoprazole              - CYP2C19    (CYP2C19 and Proton Pump Inhibitors)
+  paromomycin               - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  paroxetine                - CYP2D6     (CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and Serotonin Reuptake Inhibitor Antidepressants)
+  peginterferon alfa-2a     - IFNL3      (IFNL3 and Peginterferon-alpha-based Regimens)
+  peginterferon alfa-2b     - IFNL4      (IFNL3 and Peginterferon-alpha-based Regimens)
+  pegloticase               - G6PD       (G6PD)
+  phenytoin                 - CYP2C9     (CYP2C9, HLA-B and Phenytoin)
+  piroxicam                 - CYP2C9     (CYP2C9 and NSAIDs)
+  pitavastatin              - SLCO1B1    (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  pitolisant                - CYP2D6     (None)
+  plazomicin                - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  pravastatin               - SLCO1B1    (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  primaquine                - G6PD       (G6PD)
+  rasburicase               - G6PD       (G6PD)
+  ribostamycin              - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  rosuvastatin              - SLCO1B1    (SLCO1B1, ABCG2, CYP2C9, and Statins)
+  sertraline                - CYP2C19    (CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and Serotonin Reuptake Inhibitor Antidepressants)
+  sevoflurane               - CACNA1S    (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  siponimod                 - CYP2C9     (None)
+  streptomycin              - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  succinylcholine           - RYR1       (RYR1, CACNA1S and Volatile anesthetic agents and Succinylcholine)
+  tacrolimus                - CYP3A5     (CYP3A5 and Tacrolimus)
+  tafenoquine               - G6PD       (G6PD)
+  tamoxifen                 - CYP2D6     (CYP2D6 and Tamoxifen)
+  tenoxicam                 - CYP2C9     (CYP2C9 and NSAIDs)
+  thioguanine               - NUDT15     (TPMT, NUDT15 and Thiopurines)
+  tobramycin                - MT-RNR1    (MT-RNR1 and Aminoglycosides)
+  toluidine blue            - G6PD       (G6PD)
+  tramadol                  - CYP2D6     (CYP2D6, OPRM1, COMT, and Opioids)
+  tropisetron               - CYP2D6     (CYP2D6 and Ondansetron and Tropisetron)
+  voriconazole              - CYP2C19    (CYP2C19 and Voriconazole)
+  vortioxetine              - CYP2D6     (CYP2D6, CYP2C19, CYP2B6, SLC6A4, HTR2A and Serotonin Reuptake Inhibitor Antidepressants)
+
+We cover 6/80 Level A drugs. Missing: 74

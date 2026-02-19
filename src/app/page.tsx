@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Download, Copy, CheckCheck } from "lucide-react";
 import { LandingHero } from "@/components/LandingHero";
@@ -44,6 +44,15 @@ interface DrugResult {
     monitoring: string;
     cpic_guideline: string;
   };
+  cpic_data?: {
+    recommendation: string | null;
+    classification: string | null;
+    evidence_level: string | null;
+    guideline_name: string | null;
+    guideline_url: string | null;
+    implications: Record<string, string> | null;
+    data_source: string;
+  };
   llm_generated_explanation: {
     summary: string;
     mechanism: string;
@@ -58,7 +67,16 @@ interface DrugResult {
   };
 }
 
-const SUPPORTED_DRUGS = [
+interface CpicDrug {
+  drugname: string;
+  genesymbol: string;
+  guidelinename: string;
+  guidelineurl: string;
+  cpiclevel: string;
+  supported: boolean;
+}
+
+const FEATURED_DRUGS = [
   "CODEINE",
   "WARFARIN",
   "CLOPIDOGREL",
@@ -77,6 +95,19 @@ export default function Home() {
   const [processing, setProcessing] = useState(false); // New Processing State
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [cpicDrugs, setCpicDrugs] = useState<CpicDrug[]>([]);
+
+  // Fetch CPIC Level A drugs on mount — with cleanup to prevent stale data
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(`${API_URL}/api/cpic/level-a-drugs`, { signal: controller.signal })
+      .then((r) => r.json())
+      .then((data) => setCpicDrugs(data.drugs || []))
+      .catch(() => { });
+
+    return () => controller.abort();
+  }, []);
 
   // --- File handlers ---
   const handleFileChange = useCallback((f: File | null) => {
@@ -96,15 +127,15 @@ export default function Home() {
     setFile(f);
   }, []);
 
-  // --- Drug toggle ---
-  const toggleDrug = (drug: string) => {
+  // --- Drug toggle (functional setState — stable callback) ---
+  const toggleDrug = useCallback((drug: string) => {
     setSelectedDrugs((prev) =>
       prev.includes(drug) ? prev.filter((d) => d !== drug) : [...prev, drug]
     );
-  };
+  }, []);
 
   // --- Submit ---
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!file || selectedDrugs.length === 0) return;
     setLoading(true);
     setError(null);
@@ -137,7 +168,7 @@ export default function Home() {
       setLoading(false);
       setProcessing(false);
     }
-  };
+  }, [file, selectedDrugs]);
 
   const handleProcessingComplete = () => {
     setProcessing(false);
@@ -176,7 +207,7 @@ export default function Home() {
   };
 
   // --- Reset ---
-  const handleClearContext = () => {
+  const handleClearContext = useCallback(() => {
     setFile(null);
     setSelectedDrugs([]);
     setResults([]);
@@ -184,7 +215,7 @@ export default function Home() {
     setLoading(false);
     setProcessing(false);
     setCopied(false);
-  };
+  }, []);
 
   // --- Render: Processing State ---
   if (processing) {
@@ -202,7 +233,8 @@ export default function Home() {
         onAnalyze={handleSubmit}
         loading={loading}
         error={error}
-        supportedDrugs={SUPPORTED_DRUGS}
+        supportedDrugs={FEATURED_DRUGS}
+        cpicDrugs={cpicDrugs}
       />
     );
   }
@@ -255,11 +287,14 @@ export default function Home() {
               drugName={result.drug}
               gene={result.pharmacogenomic_profile.primary_gene}
               phenotype={result.pharmacogenomic_profile.phenotype}
+              cpicLevel={result.cpic_data?.evidence_level || null}
+              dataSource={result.cpic_data?.data_source || "Local fallback"}
             />
             <ActionPanel
               recommendation={result.clinical_recommendation}
               explanation={result.llm_generated_explanation}
               variants={result.pharmacogenomic_profile.detected_variants}
+              cpicData={result.cpic_data || null}
             />
           </motion.div>
         ))}

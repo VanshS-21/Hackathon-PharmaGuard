@@ -24,6 +24,20 @@ export const metadata: Metadata = {
     "precision medicine",
     "clinical decision support",
   ],
+  openGraph: {
+    title: "PharmaGuard | Clinical Pharmacogenomics",
+    description:
+      "AI-powered pharmacogenomic risk prediction. Upload VCF data, select drugs, and get CPIC-backed clinical recommendations.",
+    type: "website",
+    locale: "en_US",
+    siteName: "PharmaGuard",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PharmaGuard | Clinical Pharmacogenomics",
+    description:
+      "AI-powered pharmacogenomic risk prediction for precision medicine.",
+  },
 };
 
 export default function RootLayout({

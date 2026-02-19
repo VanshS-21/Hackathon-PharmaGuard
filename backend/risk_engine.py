@@ -1,62 +1,53 @@
 """
 Risk Engine — Maps gene phenotypes to drug-specific risk predictions.
-Uses hardcoded CPIC-aligned logic. Do not guess — this is the core.
+Uses CPIC API for authoritative data with hardcoded fallback.
+Loads rules from drug_rules.json for maintainability.
 """
 
+import json
+import os
+import logging
 from typing import Any
 
-# --- Gene-Drug Risk Mapping (CPIC-aligned) ---
-# Maps (drug, phenotype) -> risk_label
-RISK_MAP: dict[tuple[str, str], str] = {
-    # CODEINE + CYP2D6
-    ("CODEINE", "PM"): "Ineffective",
-    ("CODEINE", "IM"): "Adjust Dosage",
-    ("CODEINE", "NM"): "Safe",
-    ("CODEINE", "RM"): "Safe",
-    ("CODEINE", "URM"): "Toxic",
-    # WARFARIN + CYP2C9
-    ("WARFARIN", "PM"): "Adjust Dosage",
-    ("WARFARIN", "IM"): "Adjust Dosage",
-    ("WARFARIN", "NM"): "Safe",
-    ("WARFARIN", "RM"): "Safe",
-    ("WARFARIN", "URM"): "Adjust Dosage",
-    # CLOPIDOGREL + CYP2C19
-    ("CLOPIDOGREL", "PM"): "Ineffective",
-    ("CLOPIDOGREL", "IM"): "Adjust Dosage",
-    ("CLOPIDOGREL", "NM"): "Safe",
-    ("CLOPIDOGREL", "RM"): "Safe",
-    ("CLOPIDOGREL", "URM"): "Safe",
-    # SIMVASTATIN + SLCO1B1
-    ("SIMVASTATIN", "PM"): "Toxic",
-    ("SIMVASTATIN", "IM"): "Adjust Dosage",
-    ("SIMVASTATIN", "NM"): "Safe",
-    ("SIMVASTATIN", "RM"): "Safe",
-    ("SIMVASTATIN", "URM"): "Safe",
-    # AZATHIOPRINE + TPMT
-    ("AZATHIOPRINE", "PM"): "Toxic",
-    ("AZATHIOPRINE", "IM"): "Adjust Dosage",
-    ("AZATHIOPRINE", "NM"): "Safe",
-    ("AZATHIOPRINE", "RM"): "Safe",
-    ("AZATHIOPRINE", "URM"): "Safe",
-    # FLUOROURACIL + DPYD
-    ("FLUOROURACIL", "PM"): "Toxic",
-    ("FLUOROURACIL", "IM"): "Adjust Dosage",
-    ("FLUOROURACIL", "NM"): "Safe",
-    ("FLUOROURACIL", "RM"): "Safe",
-    ("FLUOROURACIL", "URM"): "Safe",
+from cpic_service import lookup_cpic_recommendation, fetch_gene_drug_pairs, fetch_level_a_drugs
+
+logger = logging.getLogger(__name__)
+
+# ── Load drug rules from JSON ──────────────────────────────────────
+
+def _load_drug_rules() -> dict[str, Any]:
+    """Load drug rules from drug_rules.json."""
+    rules_path = os.path.join(os.path.dirname(__file__), "drug_rules.json")
+    try:
+        with open(rules_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Remove metadata key
+        data.pop("_metadata", None)
+        logger.info("Loaded drug rules for %d drugs from drug_rules.json", len(data))
+        return data
+    except Exception as e:
+        logger.warning("Failed to load drug_rules.json: %s", e)
+        return {}
+
+
+_DRUG_RULES = _load_drug_rules()
+
+# CPIC uses lowercase drug names
+DRUG_NAME_CPIC: dict[str, str] = {
+    drug.upper(): drug.lower() for drug in _DRUG_RULES
 }
 
-# Drug -> Primary Gene
+# Build runtime lookup dicts from JSON data
 DRUG_GENE_MAP: dict[str, str] = {
-    "CODEINE": "CYP2D6",
-    "WARFARIN": "CYP2C9",
-    "CLOPIDOGREL": "CYP2C19",
-    "SIMVASTATIN": "SLCO1B1",
-    "AZATHIOPRINE": "TPMT",
-    "FLUOROURACIL": "DPYD",
+    drug: info["gene"] for drug, info in _DRUG_RULES.items()
 }
 
-# Severity mapping
+RISK_MAP: dict[tuple[str, str], str] = {}
+for drug, info in _DRUG_RULES.items():
+    for pheno, risk in info.get("phenotype_risk", {}).items():
+        RISK_MAP[(drug, pheno)] = risk
+
+# Default severity/confidence; drug-specific overrides possible via JSON
 SEVERITY_MAP: dict[str, str] = {
     "Safe": "none",
     "Adjust Dosage": "moderate",
@@ -65,7 +56,6 @@ SEVERITY_MAP: dict[str, str] = {
     "Unknown": "low",
 }
 
-# Confidence score mapping
 CONFIDENCE_MAP: dict[str, float] = {
     "Safe": 0.95,
     "Adjust Dosage": 0.85,
@@ -74,144 +64,21 @@ CONFIDENCE_MAP: dict[str, float] = {
     "Unknown": 0.30,
 }
 
-# Clinical recommendations per (drug, risk_label)
-CLINICAL_RECOMMENDATIONS: dict[tuple[str, str], dict[str, Any]] = {
-    ("CODEINE", "Ineffective"): {
-        "action": "Use alternative drug",
-        "dosing_guidance": "Avoid codeine — patient cannot convert to morphine",
-        "alternative_drugs": ["morphine", "oxycodone", "non-opioid analgesics"],
-        "monitoring": "Monitor for pain relief with alternative agent",
-        "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)",
-    },
-    ("CODEINE", "Adjust Dosage"): {
-        "action": "Use with caution at reduced dose or consider alternative",
-        "dosing_guidance": "Reduced codeine metabolism expected; consider 25-50% dose reduction or alternative",
-        "alternative_drugs": ["morphine", "non-opioid analgesics"],
-        "monitoring": "Monitor closely for lack of efficacy",
-        "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)",
-    },
-    ("CODEINE", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing per label",
-        "alternative_drugs": [],
-        "monitoring": "Routine monitoring",
-        "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)",
-    },
-    ("CODEINE", "Toxic"): {
-        "action": "Avoid — life-threatening toxicity risk",
-        "dosing_guidance": "Do NOT use codeine — ultrarapid conversion to morphine causes respiratory depression",
-        "alternative_drugs": ["non-opioid analgesics", "acetaminophen"],
-        "monitoring": "If inadvertently given, monitor for respiratory depression",
-        "cpic_guideline": "CPIC Guideline for CYP2D6 and Codeine Therapy (2019)",
-    },
-    ("WARFARIN", "Adjust Dosage"): {
-        "action": "Reduce dose",
-        "dosing_guidance": "Reduce initial warfarin dose by 25-50% based on CYP2C9 status",
-        "alternative_drugs": ["direct oral anticoagulants (DOACs)"],
-        "monitoring": "Frequent INR monitoring, especially during initiation",
-        "cpic_guideline": "CPIC Guideline for Warfarin and CYP2C9/VKORC1 (2017)",
-    },
-    ("WARFARIN", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing with routine INR monitoring",
-        "alternative_drugs": [],
-        "monitoring": "Routine INR monitoring",
-        "cpic_guideline": "CPIC Guideline for Warfarin and CYP2C9/VKORC1 (2017)",
-    },
-    ("CLOPIDOGREL", "Ineffective"): {
-        "action": "Use alternative antiplatelet",
-        "dosing_guidance": "Avoid clopidogrel — patient cannot activate the prodrug",
-        "alternative_drugs": ["prasugrel", "ticagrelor"],
-        "monitoring": "Monitor for cardiovascular events on alternative therapy",
-        "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)",
-    },
-    ("CLOPIDOGREL", "Adjust Dosage"): {
-        "action": "Consider alternative or increased dose",
-        "dosing_guidance": "Reduced activation expected; consider prasugrel/ticagrelor or increased clopidogrel dose",
-        "alternative_drugs": ["prasugrel", "ticagrelor"],
-        "monitoring": "Monitor for cardiovascular events and platelet function",
-        "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)",
-    },
-    ("CLOPIDOGREL", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing per label",
-        "alternative_drugs": [],
-        "monitoring": "Routine monitoring",
-        "cpic_guideline": "CPIC Guideline for CYP2C19 and Clopidogrel Therapy (2022)",
-    },
-    ("SIMVASTATIN", "Toxic"): {
-        "action": "Use alternative statin or lower dose",
-        "dosing_guidance": "Avoid simvastatin >20mg — high risk of myopathy/rhabdomyolysis",
-        "alternative_drugs": ["pravastatin", "rosuvastatin"],
-        "monitoring": "Monitor CK levels; report muscle pain/weakness immediately",
-        "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)",
-    },
-    ("SIMVASTATIN", "Adjust Dosage"): {
-        "action": "Lower dose or use alternative",
-        "dosing_guidance": "Limit simvastatin to ≤20mg daily or switch to pravastatin/rosuvastatin",
-        "alternative_drugs": ["pravastatin", "rosuvastatin"],
-        "monitoring": "Monitor for muscle symptoms and CK levels",
-        "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)",
-    },
-    ("SIMVASTATIN", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing per label",
-        "alternative_drugs": [],
-        "monitoring": "Routine lipid panel monitoring",
-        "cpic_guideline": "CPIC Guideline for SLCO1B1 and Simvastatin (2014)",
-    },
-    ("AZATHIOPRINE", "Toxic"): {
-        "action": "Drastically reduce dose or avoid",
-        "dosing_guidance": "Reduce dose by 90% or avoid azathioprine — severe myelosuppression risk",
-        "alternative_drugs": ["mycophenolate mofetil"],
-        "monitoring": "Frequent CBC with differential; monitor for myelosuppression",
-        "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)",
-    },
-    ("AZATHIOPRINE", "Adjust Dosage"): {
-        "action": "Reduce initial dose",
-        "dosing_guidance": "Start at 30-70% of standard dose; titrate based on tolerance",
-        "alternative_drugs": ["mycophenolate mofetil"],
-        "monitoring": "CBC weekly for first month, then biweekly",
-        "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)",
-    },
-    ("AZATHIOPRINE", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing per label",
-        "alternative_drugs": [],
-        "monitoring": "Routine CBC monitoring",
-        "cpic_guideline": "CPIC Guideline for TPMT/NUDT15 and Thiopurines (2018)",
-    },
-    ("FLUOROURACIL", "Toxic"): {
-        "action": "Avoid or drastically reduce dose",
-        "dosing_guidance": "Avoid 5-FU — high risk of fatal toxicity due to DPD deficiency",
-        "alternative_drugs": ["non-fluoropyrimidine regimens"],
-        "monitoring": "If used, monitor for severe mucositis, myelosuppression, neurotoxicity",
-        "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)",
-    },
-    ("FLUOROURACIL", "Adjust Dosage"): {
-        "action": "Reduce initial dose",
-        "dosing_guidance": "Start at 25-50% of standard dose; titrate based on tolerance",
-        "alternative_drugs": ["non-fluoropyrimidine regimens"],
-        "monitoring": "Close monitoring for mucositis, myelosuppression",
-        "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)",
-    },
-    ("FLUOROURACIL", "Safe"): {
-        "action": "Use as directed",
-        "dosing_guidance": "Standard dosing per label",
-        "alternative_drugs": [],
-        "monitoring": "Routine monitoring for fluoropyrimidine toxicity",
-        "cpic_guideline": "CPIC Guideline for DPYD and Fluoropyrimidines (2017)",
-    },
-}
+CLINICAL_RECOMMENDATIONS: dict[tuple[str, str], dict[str, Any]] = {}
+for drug, info in _DRUG_RULES.items():
+    for risk_label, rec in info.get("recommendations", {}).items():
+        CLINICAL_RECOMMENDATIONS[(drug, risk_label)] = rec
 
 
-def assess_risk(
+
+async def assess_risk(
     drug: str,
     variants: list[dict[str, Any]],
     gene_diplotypes: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     """
     Assess pharmacogenomic risk for a given drug.
+    Enriches results with CPIC API data (falls back to local data).
 
     Args:
         drug: Drug name (uppercase)
@@ -219,14 +86,14 @@ def assess_risk(
         gene_diplotypes: Dict of gene -> {diplotype, phenotype, alleles}
 
     Returns:
-        Complete risk assessment dict with all required fields.
+        Complete risk assessment dict with all required fields + CPIC data.
     """
     drug = drug.upper()
     primary_gene = DRUG_GENE_MAP.get(drug)
 
     if not primary_gene:
-        # Unsupported drug
-        return _unknown_result(drug, variants)
+        # Drug not in our local rules — try CPIC guideline-only mode
+        return await _cpic_guideline_result(drug, variants, gene_diplotypes)
 
     gene_info = gene_diplotypes.get(primary_gene)
     if not gene_info:
@@ -235,12 +102,12 @@ def assess_risk(
     phenotype = gene_info["phenotype"]
     diplotype = gene_info["diplotype"]
 
-    # Look up risk
+    # Look up risk from local map
     risk_label = RISK_MAP.get((drug, phenotype), "Unknown")
     severity = SEVERITY_MAP.get(risk_label, "low")
     confidence = CONFIDENCE_MAP.get(risk_label, 0.30)
 
-    # Get clinical recommendation
+    # Get local clinical recommendation (fallback)
     rec = CLINICAL_RECOMMENDATIONS.get(
         (drug, risk_label),
         {
@@ -251,6 +118,40 @@ def assess_risk(
             "cpic_guideline": "N/A",
         },
     )
+
+    # ── CPIC API enrichment ──
+    cpic_data = {
+        "recommendation": None,
+        "classification": None,
+        "evidence_level": None,
+        "guideline_name": None,
+        "guideline_url": None,
+        "implications": None,
+        "data_source": "Local fallback",
+    }
+
+    cpic_drug_name = DRUG_NAME_CPIC.get(drug)
+    if cpic_drug_name:
+        try:
+            cpic_rec = await lookup_cpic_recommendation(
+                cpic_drug_name, primary_gene, phenotype
+            )
+            if cpic_rec:
+                cpic_data["recommendation"] = cpic_rec.get("drugrecommendation")
+                cpic_data["classification"] = cpic_rec.get("classification")
+                cpic_data["guideline_name"] = cpic_rec.get("guidelinename")
+                cpic_data["guideline_url"] = cpic_rec.get("guidelineurl")
+                cpic_data["implications"] = cpic_rec.get("implications")
+                cpic_data["data_source"] = "CPIC API"
+
+                # Derive evidence level from gene-drug pairs
+                pairs = await fetch_gene_drug_pairs(primary_gene)
+                for p in pairs:
+                    if p.get("drugname", "").lower() == cpic_drug_name:
+                        cpic_data["evidence_level"] = p.get("cpiclevel")
+                        break
+        except Exception as e:
+            logger.warning("CPIC enrichment failed for %s: %s", drug, e)
 
     # Filter variants for this gene
     gene_variants = [v for v in variants if v.get("gene") == primary_gene]
@@ -264,6 +165,7 @@ def assess_risk(
         "phenotype": phenotype,
         "detected_variants": gene_variants,
         "clinical_recommendation": rec,
+        "cpic_data": cpic_data,
     }
 
 
@@ -288,4 +190,90 @@ def _unknown_result(
             "monitoring": "Standard monitoring",
             "cpic_guideline": "N/A",
         },
+    }
+
+
+async def _cpic_guideline_result(
+    drug: str,
+    variants: list[dict[str, Any]],
+    gene_diplotypes: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """
+    For drugs not in our local rules, produce a professional CPIC
+    guideline-based result instead of a bare 'Unknown'.
+    """
+    drug_lower = drug.lower()
+
+    # Find this drug's gene from CPIC Level A data
+    primary_gene = "Unknown"
+    guideline_url = None
+    guideline_name = None
+    try:
+        level_a = await fetch_level_a_drugs()
+        for entry in level_a:
+            if entry["drugname"] == drug_lower:
+                # Take first gene (before comma if multi-gene)
+                primary_gene = entry["genesymbol"].split(",")[0].strip()
+                guideline_url = entry.get("guidelineurl", "")
+                guideline_name = entry.get("guidelinename", "")
+                break
+    except Exception:
+        pass
+
+    # Try to get patient's genotype for this gene from VCF data
+    gene_info = gene_diplotypes.get(primary_gene)
+    diplotype = gene_info["diplotype"] if gene_info else "Not in panel"
+    phenotype = gene_info["phenotype"] if gene_info else "Not determined"
+    gene_variants = [v for v in variants if v.get("gene") == primary_gene]
+
+    # Try CPIC enrichment for recommendation
+    cpic_data = {
+        "recommendation": None,
+        "classification": None,
+        "evidence_level": "A",
+        "guideline_name": guideline_name,
+        "guideline_url": guideline_url,
+        "implications": None,
+        "data_source": "CPIC API",
+    }
+
+    try:
+        if gene_info and phenotype != "Unknown":
+            cpic_rec = await lookup_cpic_recommendation(
+                drug_lower, primary_gene, phenotype
+            )
+            if cpic_rec:
+                cpic_data["recommendation"] = cpic_rec.get("drugrecommendation")
+                cpic_data["classification"] = cpic_rec.get("classification")
+                cpic_data["implications"] = cpic_rec.get("implications")
+                if cpic_rec.get("guidelineurl"):
+                    cpic_data["guideline_url"] = cpic_rec["guidelineurl"]
+                if cpic_rec.get("guidelinename"):
+                    cpic_data["guideline_name"] = cpic_rec["guidelinename"]
+    except Exception as e:
+        logger.warning("CPIC guideline lookup failed for %s: %s", drug, e)
+
+    # Professional clinical recommendation
+    action = f"Refer to CPIC {primary_gene} guideline for {drug.capitalize()} dosing"
+    if cpic_data.get("recommendation"):
+        action = cpic_data["recommendation"]
+
+    guideline_ref = guideline_url or "https://cpicpgx.org/guidelines/"
+
+    return {
+        "risk_label": "Guideline Available",
+        "confidence_score": 0.75,
+        "severity": "info",
+        "primary_gene": primary_gene,
+        "diplotype": diplotype,
+        "phenotype": phenotype,
+        "detected_variants": gene_variants,
+        "clinical_recommendation": {
+            "action": action,
+            "dosing_guidance": f"CPIC Level A guideline available for {drug.capitalize()}/{primary_gene}. Consult the published clinical guideline for genotype-specific dosing recommendations.",
+            "alternative_drugs": [],
+            "monitoring": "Follow CPIC guideline monitoring recommendations",
+            "cpic_guideline": guideline_ref,
+        },
+        "cpic_data": cpic_data,
     }

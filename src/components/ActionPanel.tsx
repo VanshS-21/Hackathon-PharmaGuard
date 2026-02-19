@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, BookOpen, Activity, Dna, FileText } from "lucide-react";
+import { ExternalLink, BookOpen, Activity, Dna, FileText, Shield } from "lucide-react";
 import { motion } from "motion/react";
 
 interface DetectedVariant {
@@ -8,6 +8,16 @@ interface DetectedVariant {
     gene: string;
     genotype: string;
     clinical_significance: string;
+}
+
+interface CpicData {
+    recommendation: string | null;
+    classification: string | null;
+    evidence_level: string | null;
+    guideline_name: string | null;
+    guideline_url: string | null;
+    implications: Record<string, string> | null;
+    data_source: string;
 }
 
 interface ActionPanelProps {
@@ -22,13 +32,18 @@ interface ActionPanelProps {
         evidence_level: string;
     };
     variants: DetectedVariant[];
+    cpicData?: CpicData | null;
 }
 
 export function ActionPanel({
     recommendation,
     explanation,
     variants,
+    cpicData,
 }: ActionPanelProps) {
+    const isCpic = cpicData?.data_source === "CPIC API";
+    const guidelineUrl = cpicData?.guideline_url || "#";
+
     return (
         <div className="bg-white border-x border-b border-slate-200 rounded-b-xl p-6 md:p-8 space-y-8">
             <div className="grid md:grid-cols-3 gap-8">
@@ -69,6 +84,43 @@ export function ActionPanel({
                         )}
                     </motion.div>
 
+                    {/* CPIC Official Recommendation */}
+                    {isCpic && cpicData?.recommendation && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.22 }}
+                            className="bg-teal-50 rounded-xl border border-teal-200 p-6 shadow-sm"
+                        >
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="flex items-center gap-1.5 text-teal-700">
+                                    <Shield className="w-5 h-5" />
+                                    <h3 className="text-base font-bold">CPIC Official Recommendation</h3>
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 border border-teal-200">
+                                    CPIC Verified
+                                </span>
+                            </div>
+
+                            <p className="text-sm text-teal-900 leading-relaxed mb-4">
+                                {cpicData.recommendation}
+                            </p>
+
+                            {cpicData.guideline_name && (
+                                <div className="flex items-center gap-4 pt-2 border-t border-teal-200/50">
+                                    <span className="text-xs text-teal-600 font-medium truncate flex-1">
+                                        {cpicData.guideline_name}
+                                    </span>
+                                    {cpicData.classification && (
+                                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-100 text-teal-800">
+                                            {cpicData.classification}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
+
                     {/* Evidence Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 12 }}
@@ -97,7 +149,12 @@ export function ActionPanel({
                         </div>
 
                         <div className="flex items-center gap-6 pt-2">
-                            <a href="#" className="flex items-center gap-2 text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline">
+                            <a
+                                href={guidelineUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline"
+                            >
                                 <BookOpen className="w-3.5 h-3.5" /> CPIC Guidelines
                             </a>
                             <a href="#" className="flex items-center gap-2 text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline">
@@ -151,3 +208,4 @@ export function ActionPanel({
         </div>
     );
 }
+

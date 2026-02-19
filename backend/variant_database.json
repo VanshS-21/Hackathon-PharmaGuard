@@ -1,0 +1,107 @@
+{
+    "CYP2D6": {
+        "rs3892097": {
+            "star": "*4",
+            "effect": "loss_of_function"
+        },
+        "rs1065852": {
+            "star": "*10",
+            "effect": "reduced_function"
+        }
+    },
+    "CYP2C19": {
+        "rs4244285": {
+            "star": "*2",
+            "effect": "loss_of_function"
+        },
+        "rs4986893": {
+            "star": "*3",
+            "effect": "loss_of_function"
+        },
+        "rs12248560": {
+            "star": "*17",
+            "effect": "increased_function"
+        }
+    },
+    "CYP2C9": {
+        "rs1799853": {
+            "star": "*2",
+            "effect": "reduced_function"
+        },
+        "rs1057910": {
+            "star": "*3",
+            "effect": "loss_of_function"
+        }
+    },
+    "SLCO1B1": {
+        "rs4149056": {
+            "star": "*5",
+            "effect": "reduced_function"
+        }
+    },
+    "TPMT": {
+        "rs1142345": {
+            "star": "*3A",
+            "effect": "loss_of_function"
+        }
+    },
+    "DPYD": {
+        "rs3918290": {
+            "star": "*2A",
+            "effect": "loss_of_function"
+        }
+    },
+    "_metadata": {
+        "description": "PharmaGuard variant database — maps rsID to star allele and functional effect per gene",
+        "source": "CPIC (Clinical Pharmacogenetics Implementation Consortium)",
+        "genes_covered": [
+            "CYP2D6",
+            "CYP2C19",
+            "CYP2C9",
+            "SLCO1B1",
+            "TPMT",
+            "DPYD"
+        ],
+        "effect_types": [
+            "loss_of_function",
+            "reduced_function",
+            "increased_function"
+        ],
+        "last_updated": "2026-02-19"
+    },
+    "_star_allele_functions": {
+        "_description": "Extended star allele → function map used by the VCF parser for diplotype calling. Keys are 'GENE:STAR' strings.",
+        "CYP2D6:*1": "normal_function",
+        "CYP2D6:*2": "normal_function",
+        "CYP2D6:*3": "no_function",
+        "CYP2D6:*4": "no_function",
+        "CYP2D6:*5": "no_function",
+        "CYP2D6:*6": "no_function",
+        "CYP2D6:*9": "decreased_function",
+        "CYP2D6:*10": "decreased_function",
+        "CYP2D6:*17": "decreased_function",
+        "CYP2D6:*41": "decreased_function",
+        "CYP2D6:*1XN": "increased_function",
+        "CYP2D6:*2XN": "increased_function",
+        "CYP2C19:*1": "normal_function",
+        "CYP2C19:*2": "no_function",
+        "CYP2C19:*3": "no_function",
+        "CYP2C19:*17": "increased_function",
+        "CYP2C9:*1": "normal_function",
+        "CYP2C9:*2": "decreased_function",
+        "CYP2C9:*3": "no_function",
+        "CYP2C9:*6": "no_function",
+        "SLCO1B1:*1": "normal_function",
+        "SLCO1B1:*5": "decreased_function",
+        "SLCO1B1:*15": "decreased_function",
+        "SLCO1B1:*17": "decreased_function",
+        "TPMT:*1": "normal_function",
+        "TPMT:*2": "no_function",
+        "TPMT:*3A": "no_function",
+        "TPMT:*3B": "no_function",
+        "TPMT:*3C": "no_function",
+        "DPYD:*1": "normal_function",
+        "DPYD:*2A": "no_function",
+        "DPYD:*13": "no_function"
+    }
+}
