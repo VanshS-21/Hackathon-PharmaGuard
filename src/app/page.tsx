@@ -51,15 +51,6 @@ interface DrugResult {
     monitoring: string;
     cpic_guideline: string;
   };
-  cpic_data?: {
-    recommendation: string | null;
-    classification: string | null;
-    evidence_level: string | null;
-    guideline_name: string | null;
-    guideline_url: string | null;
-    implications: Record<string, string> | null;
-    data_source: string;
-  };
   llm_generated_explanation: {
     summary: string;
     mechanism: string;
@@ -167,8 +158,8 @@ export default function Home() {
         throw new Error(err.detail || `Error ${res.status}`);
       }
 
-      const data = await res.json();
-      setResults(data.results);
+      const data: DrugResult[] = await res.json();
+      setResults(data);
 
       // Save to patient history (patient info stays client-side only)
       try {
@@ -179,7 +170,7 @@ export default function Home() {
           patientDob: patientInfo.dob,
           timestamp: new Date().toISOString(),
           drugsAnalysed: [...selectedDrugs],
-          results: data.results,
+          results: data,
         });
         // Keep last 20 entries
         localStorage.setItem("pharmaguard-history", JSON.stringify(history.slice(0, 20)));
@@ -331,14 +322,14 @@ export default function Home() {
               drugName={result.drug}
               gene={result.pharmacogenomic_profile.primary_gene}
               phenotype={result.pharmacogenomic_profile.phenotype}
-              cpicLevel={result.cpic_data?.evidence_level || null}
-              dataSource={result.cpic_data?.data_source || "Local fallback"}
+              cpicLevel={null}
+              dataSource="CPIC Guidelines"
             />
             <ActionPanel
               recommendation={result.clinical_recommendation}
               explanation={result.llm_generated_explanation}
               variants={result.pharmacogenomic_profile.detected_variants}
-              cpicData={result.cpic_data || null}
+              cpicData={null}
             />
           </motion.div>
         ))}
