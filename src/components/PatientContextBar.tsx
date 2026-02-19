@@ -25,7 +25,7 @@ export function PatientContextBar({
                         <div className="w-6 h-6 bg-teal-600 rounded-md flex items-center justify-center text-white text-[10px] font-black tracking-tighter">
                             PGx
                         </div>
-                        <span className="font-bold text-slate-900 text-sm tracking-tight">Clinical Dashboard</span>
+                        <span className="font-bold text-slate-900 text-sm tracking-tight">Pharmacogenomics Report</span>
                     </div>
 
                     <div className="h-4 w-px bg-slate-300 hidden md:block" />
@@ -49,7 +49,7 @@ export function PatientContextBar({
                     className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors"
                 >
                     <X className="w-3.5 h-3.5" />
-                    Close Session
+                    New analysis
                 </button>
             </div>
         </motion.div>

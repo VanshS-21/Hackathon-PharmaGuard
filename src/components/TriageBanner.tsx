@@ -34,33 +34,33 @@ export function TriageBanner({
     let containerClass = "bg-slate-50 border-slate-200";
     let accentClass = "text-slate-500";
     let icon = <HelpCircle className="w-6 h-6" />;
-    let headline = "STATUS UNKNOWN";
-    let statusId = "UNKNOWN";
+    let headline = "Status unknown";
+    let statusId = "Unknown";
 
     if (label.includes("safe") || label.includes("normal")) {
         containerClass = "bg-emerald-50/50 border-emerald-200";
         accentClass = "text-emerald-600";
         icon = <CheckCircle className="w-6 h-6" />;
-        headline = "USE AS DIRECTED";
-        statusId = "SAFE";
+        headline = "Use as directed";
+        statusId = "Safe";
     } else if (label.includes("guideline")) {
         containerClass = "bg-sky-50/50 border-sky-200";
         accentClass = "text-sky-600";
         icon = <BookOpen className="w-6 h-6" />;
-        headline = "GUIDELINE REQ.";
-        statusId = "INFO";
+        headline = "Guideline required";
+        statusId = "Guideline";
     } else if (label.includes("adjust") || label.includes("monitor") || label.includes("intermediate")) {
         containerClass = "bg-amber-50/50 border-amber-200";
         accentClass = "text-amber-600";
         icon = <AlertTriangle className="w-6 h-6" />;
-        headline = "ADJUST DOSAGE";
-        statusId = "WARNING";
+        headline = "Adjust dosage";
+        statusId = "Caution";
     } else if (label.includes("toxic") || label.includes("poor") || label.includes("risk")) {
         containerClass = "bg-red-50/50 border-red-200";
         accentClass = "text-red-600";
         icon = <XCircle className="w-6 h-6" />;
-        headline = "CONTRAINDICATED";
-        statusId = "CRITICAL";
+        headline = "Contraindicated";
+        statusId = "High risk";
     }
 
     const isCpic = dataSource === "CPIC API";
@@ -91,7 +91,7 @@ export function TriageBanner({
                                 {statusId}
                             </div>
                             <span className="text-[10px] font-mono text-slate-400 uppercase">
-                                REF: {drugName}
+                                Drug: {drugName}
                             </span>
                         </div>
                         <h2 className={cn("text-2xl font-bold tracking-tight", accentClass)}>
@@ -109,9 +109,9 @@ export function TriageBanner({
                     </div>
                     {cpicLevel && (
                         <div>
-                            <div className="text-slate-400 uppercase text-[10px] mb-1">Evidence</div>
+                            <div className="text-slate-400 uppercase text-[10px] mb-1">Evidence level</div>
                             <div className={cn("font-bold px-2 py-1 rounded border", levelClass)}>
-                                LEVEL {cpicLevel}
+                                Level {cpicLevel}
                             </div>
                         </div>
                     )}

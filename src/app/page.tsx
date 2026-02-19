@@ -250,8 +250,8 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Analysis Results</h1>
-            <span className="text-sm text-slate-500">Generated {new Date().toLocaleDateString()}</span>
+            <h1 className="text-2xl font-bold text-slate-900">Drug interaction report</h1>
+            <span className="text-sm text-slate-500">Generated on {new Date().toLocaleDateString()}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -261,7 +261,7 @@ export default function Home() {
               {copied ? (
                 <><CheckCheck className="w-4 h-4 text-emerald-600" /> Copied!</>
               ) : (
-                <><Copy className="w-4 h-4" /> Copy JSON</>
+                <><Copy className="w-4 h-4" /> Copy as JSON</>
               )}
             </button>
             <button
@@ -269,7 +269,7 @@ export default function Home() {
               className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-colors duration-200 shadow-sm"
             >
               <Download className="w-4 h-4" />
-              Download JSON
+              Download report
             </button>
           </div>
         </div>

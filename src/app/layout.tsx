@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PharmaGuard | Precision Protocol Interface",
-  description: "Advanced pharmacogenomic risk stratification system. Level A Clinical Decision Support.",
+  title: "PharmaGuard | Clinical Pharmacogenomics",
+  description: "Identify drug-gene interactions and personalise therapy using CPIC Level A evidence.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -38,25 +38,25 @@ export default function RootLayout({
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-slate-100 font-bold">
               <Shield className="w-3.5 h-3.5 text-teal-500" />
-              PHARMAGUARD_OS <span className="text-teal-500">v2.4.0</span>
+              PharmaGuard <span className="text-teal-500">v2.4.0</span>
             </div>
             <div className="hidden md:flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              SYSTEM_ONLINE
+              Online
             </div>
             <div className="hidden md:flex items-center gap-2">
               <Activity className="w-3.5 h-3.5 text-slate-600" />
-              CPU_LOAD: 12%
+              CPIC Level A
             </div>
           </div>
 
           <div className="flex items-center gap-6">
             <div className="hidden md:block">
-              SECURE_CONNECTION_ESTABLISHED
+              End-to-end encrypted
             </div>
             <div className="flex items-center gap-2 text-teal-500">
               <Zap className="w-3.5 h-3.5 text-yellow-500" />
-              POWER_SAVING_OFF
+              Secure session
             </div>
             <div className="pl-6 border-l border-slate-700 text-slate-300">
               {new Date().toISOString().split('T')[0]}
@@ -83,9 +83,9 @@ export default function RootLayout({
               <span>PharmaGuard Clinical Systems &copy; 2026</span>
             </div>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-teal-600 transition-colors">[PRIVACY_PROTOCOL]</a>
-              <a href="#" className="hover:text-teal-600 transition-colors">[USAGE_TERMS]</a>
-              <a href="#" className="hover:text-teal-600 transition-colors">[SYSTEM_STATUS]</a>
+              <a href="#" className="hover:text-teal-600 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-teal-600 transition-colors">Terms of Use</a>
+              <a href="#" className="hover:text-teal-600 transition-colors">System Status</a>
             </div>
           </div>
         </footer>

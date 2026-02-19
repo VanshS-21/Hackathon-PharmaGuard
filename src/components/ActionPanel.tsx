@@ -62,7 +62,7 @@ export function ActionPanel({
                     >
                         <div className="absolute -left-[5px] top-0 w-2 h-2 bg-slate-900 rounded-full"></div>
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
-                            Clinical_Directive
+                            Clinical recommendation
                         </h3>
                         <p className="text-lg text-slate-900 font-bold leading-relaxed">
                             {recommendation.action}
@@ -76,7 +76,7 @@ export function ActionPanel({
                     {recommendation.alternative_drugs.length > 0 && (
                         <div className="pl-6">
                             <h4 className="text-[10px] uppercase text-slate-400 mb-2 flex items-center gap-2">
-                                <CornerDownRight className="w-3 h-3" /> Alternatives
+                                <CornerDownRight className="w-3 h-3" /> Alternative drugs
                             </h4>
                             <div className="flex flex-wrap gap-2">
                                 {recommendation.alternative_drugs.map(drug => (
@@ -94,7 +94,7 @@ export function ActionPanel({
                     <div className="grid md:grid-cols-2 gap-6 text-xs">
                         <div className="space-y-2">
                             <h4 className="font-bold text-slate-900 uppercase flex items-center gap-2">
-                                <Activity className="w-3 h-3 text-teal-500" /> Mechanism
+                                <Activity className="w-3 h-3 text-teal-500" /> How this drug is metabolised
                             </h4>
                             <p className="text-slate-600 leading-relaxed text-justify">
                                 {explanation.mechanism}
@@ -102,13 +102,13 @@ export function ActionPanel({
                         </div>
                         <div className="space-y-2">
                             <h4 className="font-bold text-slate-900 uppercase flex items-center gap-2">
-                                <Shield className="w-3 h-3 text-teal-500" /> Guideline
+                                <Shield className="w-3 h-3 text-teal-500" /> CPIC guideline
                             </h4>
                             <p className="text-slate-600">
-                                {cpicData?.guideline_name || "No specific guideline"}
+                                {cpicData?.guideline_name || "No specific guideline available"}
                             </p>
                             <a href={guidelineUrl} target="_blank" className="inline-flex items-center gap-1 text-teal-600 hover:underline mt-1">
-                                [ACCESS_SOURCE] <ExternalLink className="w-3 h-3" />
+                                View CPIC guideline <ExternalLink className="w-3 h-3" />
                             </a>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ export function ActionPanel({
                 {/* ─── Col 2: Genetics (Right sidebar) ─── */}
                 <div className="md:col-span-4 border-t md:border-t-0 md:border-l border-slate-200 md:pl-8 pt-8 md:pt-0">
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <Dna className="w-4 h-4" /> Molecular_Profile
+                        <Dna className="w-4 h-4" /> Genetic variants detected
                     </h3>
 
                     <div className="space-y-4">
@@ -139,7 +139,7 @@ export function ActionPanel({
 
                         {variants.length === 0 && (
                             <div className="text-xs text-slate-400 italic p-4 border border-dashed border-slate-200 text-center">
-                                No variants deteced in target region.
+                                No variants detected in the target gene region. Standard dosing guidelines apply.
                             </div>
                         )}
                     </div>

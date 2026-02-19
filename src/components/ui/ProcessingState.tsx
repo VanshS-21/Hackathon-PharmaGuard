@@ -10,10 +10,10 @@ interface ProcessingStateProps {
 }
 
 const STEPS = [
-    { id: 1, label: "PARSING_GENOMIC_DATA", icon: FileSearch, duration: 800, details: "Extracting variants..." },
-    { id: 2, label: "IDENTIFYING_PHARMACOGENES", icon: Dna, duration: 1200, details: "Matching CYP450..." },
-    { id: 3, label: "ANALYZING_INTERACTIONS", icon: FlaskConical, duration: 1500, details: "Cross-referencing..." },
-    { id: 4, label: "GENERATING_REPORT", icon: Terminal, duration: 800, details: "Compiling JSON..." },
+    { id: 1, label: "Reading VCF file", icon: FileSearch, duration: 800, details: "Extracting genetic variants…" },
+    { id: 2, label: "Identifying pharmacogenes", icon: Dna, duration: 1200, details: "Matching CYP450 and other key genes…" },
+    { id: 3, label: "Assessing drug interactions", icon: FlaskConical, duration: 1500, details: "Cross-referencing CPIC guidelines…" },
+    { id: 4, label: "Building your report", icon: Terminal, duration: 800, details: "Compiling clinical recommendations…" },
 ];
 
 export function ProcessingState({ onComplete }: ProcessingStateProps) {
@@ -48,7 +48,7 @@ export function ProcessingState({ onComplete }: ProcessingStateProps) {
                 <div className="flex items-center justify-between border-b border-slate-700 pb-4">
                     <div className="flex items-center gap-2 text-teal-400 font-mono text-xs uppercase tracking-widest">
                         <Activity className="w-4 h-4 animate-pulse" />
-                        System_Diagnostics
+                        Analysing your genome
                     </div>
                     <div className="font-mono text-[10px] text-slate-500">
                         PID: {Math.floor(Math.random() * 99999)}

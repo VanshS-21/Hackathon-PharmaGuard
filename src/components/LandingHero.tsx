@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { DnaHelix } from "@/components/ui/DnaHelix";
 
 interface CpicDrug {
     drugname: string;
@@ -100,6 +101,19 @@ export function LandingHero({
     return (
         <div className="relative min-h-[calc(100vh-64px)] flex flex-col md:flex-row items-center justify-center p-6 md:p-12 gap-12 max-w-7xl mx-auto">
 
+            {/* Full-page DNA helix background — diagonal bottom-left → top-right */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center opacity-70">
+                <div style={{ transform: "rotate(-35deg)" }}>
+                    <DnaHelix
+                        width={400}
+                        height={1400}
+                        opacity={0.04}
+                        speed={0.5}
+                        className="hidden md:block"
+                    />
+                </div>
+            </div>
+
             {/* Left Column: Hero Text */}
             <div className="flex-1 space-y-8 text-center md:text-left relative z-10">
                 <motion.div
@@ -109,18 +123,18 @@ export function LandingHero({
                 >
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono mb-6 tracking-wider uppercase">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 blink"></span>
-                        System Online
+                        Ready
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 mb-6 leading-tight">
-                        Precision Medicine <br />
+                        Pharmacogenomic <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600">
-                            Protocol Interface
+                            Risk Analysis
                         </span>
                     </h1>
                     <p className="text-lg text-slate-600 max-w-xl leading-relaxed font-mono text-sm border-l-2 border-slate-200 pl-4">
-                        // INITIALIZING PHARMACOGENOMIC ANALYSIS MODULE<br />
-                        // TARGET: CPIC LEVEL A INTERACTIONS<br />
-                        // UPLOAD_STATUS: AWAITING_INPUT
+                        Detect drug-gene interactions in seconds.<br />
+                        Backed by CPIC Level A guidelines.<br />
+                        Your data never leaves this device.
                     </p>
                 </motion.div>
 
@@ -133,19 +147,38 @@ export function LandingHero({
                     <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs font-mono text-slate-500">
                         <div className="flex items-center gap-2">
                             <Check className="w-3 h-3 text-emerald-500" />
-                            HIPAA_COMPLIANT
+                            HIPAA compliant
                         </div>
                         <div className="flex items-center gap-2">
                             <Check className="w-3 h-3 text-emerald-500" />
-                            LOCAL_PROCESSING
+                            Runs locally
                         </div>
                         <div className="flex items-center gap-2">
                             <Check className="w-3 h-3 text-emerald-500" />
-                            CPIC_DATABASE_V2026
+                            CPIC 2026 database
                         </div>
                         <div className="flex items-center gap-2">
                             <Check className="w-3 h-3 text-emerald-500" />
-                            ENCRYPTION_ACTIVE
+                            Data encrypted
+                        </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6, duration: 1 }}
+                    className="pt-16 hidden md:block"
+                >
+                    <div className="flex items-center gap-4 text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                        <div className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            System Operational
+                        </div>
+                        <div className="w-px h-3 bg-slate-300"></div>
+                        <div className="flex items-center gap-2">
+                            <Cpu className="w-3 h-3 text-slate-400" />
+                            Local Processing
                         </div>
                     </div>
                 </motion.div>
@@ -162,7 +195,7 @@ export function LandingHero({
                     <div className="bg-slate-50/50 p-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
                         <h3 className="text-xs font-bold text-slate-700 flex items-center gap-2 font-mono uppercase tracking-wider">
                             <Binary className="w-4 h-4 text-slate-400" />
-                            Data_Ingestion_Port
+                            New Analysis
                         </h3>
                         <div className="text-[10px] font-mono text-slate-400">
                             ID: {formId.replace(/:/g, "").toUpperCase().slice(0, 9)}
@@ -173,9 +206,9 @@ export function LandingHero({
                         {/* Step 1 */}
                         <div className="space-y-4">
                             <label className="text-xs font-bold text-slate-900 flex items-center justify-between font-mono uppercase">
-                                <span>1. Load Genomic Data (VCF)</span>
+                                <span>1. Upload your VCF file</span>
                                 <span className={cn("text-[10px] px-1.5 py-0.5 rounded", file ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500")}>
-                                    {file ? "LOADED" : "REQUIRED"}
+                                    {file ? "File ready" : "Required"}
                                 </span>
                             </label>
 
@@ -185,9 +218,9 @@ export function LandingHero({
                                 onDrop={handleDrop}
                                 onClick={() => fileInputRef.current?.click()}
                                 className={cn(
-                                    "border-2 border-dashed rounded-none p-8 transition-all duration-200 cursor-pointer text-center relative group overflow-hidden",
-                                    dragOver ? "border-teal-500 bg-teal-50/50" : "border-slate-300 bg-slate-50/30 hover:border-teal-400 hover:bg-slate-100/50",
-                                    file ? "border-emerald-500 bg-emerald-50/30 border-solid" : ""
+                                    "border-2 border-dashed rounded-none p-8 transition-all duration-300 cursor-pointer text-center relative group overflow-hidden",
+                                    dragOver ? "border-teal-500 bg-teal-50/50" : "border-teal-500/30 bg-teal-50/5 hover:border-teal-400 hover:bg-teal-50/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.15)]",
+                                    file ? "border-emerald-500 bg-emerald-50/30 border-solid shadow-none hover:shadow-none" : ""
                                 )}
                             >
                                 <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/grid.svg')] bg-[length:10px_10px]"></div>
@@ -224,7 +257,7 @@ export function LandingHero({
                                                 onClick={(e) => { e.stopPropagation(); onFileChange(null); }}
                                                 className="text-[10px] text-red-500 hover:text-red-700 font-mono underline decoration-dotted underline-offset-4 uppercase"
                                             >
-                                                [Eject_Disc]
+                                                Remove file
                                             </button>
                                         </motion.div>
                                     ) : (
@@ -238,21 +271,26 @@ export function LandingHero({
                                                 <Upload className="w-6 h-6" />
                                             </div>
                                             <div className="font-mono text-xs">
-                                                <p className="font-bold text-slate-700 uppercase">Input VCF Sequence</p>
-                                                <p className="text-slate-400 mt-1">DRAG_AND_DROP OR CLICK</p>
+                                                <p className="font-bold text-slate-700 uppercase">Drop your VCF file here</p>
+                                                <p className="text-slate-400 mt-1">or click to browse</p>
                                             </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
+                            </div>
+
+                            {/* Format explicitly supported underneath */}
+                            <div className="text-[10px] text-slate-400 text-center font-mono mt-2 tracking-wider">
+                                SUPPORTS .VCF FILES UP TO 5MB
                             </div>
                         </div>
 
                         {/* Step 2 — Drug Selection */}
                         <div className="space-y-4">
                             <label className="text-xs font-bold text-slate-900 flex items-center justify-between font-mono uppercase">
-                                <span>2. Select Target Parameters</span>
+                                <span>2. Select drugs to analyse</span>
                                 <span className={cn("text-[10px] px-1.5 py-0.5 rounded", selectedDrugs.length > 0 ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500")}>
-                                    {selectedDrugs.length > 0 ? `${selectedDrugs.length}_SELECTED` : "PENDING"}
+                                    {selectedDrugs.length > 0 ? `${selectedDrugs.length} selected` : "Required"}
                                 </span>
                             </label>
 
@@ -294,10 +332,10 @@ export function LandingHero({
                                             }}
                                             onFocus={() => setShowDropdown(true)}
                                             onBlur={handleBlur}
-                                            placeholder="SEARCH_DATABASE..."
+                                            placeholder="Search by drug or gene (e.g. warfarin, CYP2C9)"
                                             autoComplete="off"
                                             spellCheck={false}
-                                            className="w-full pl-9 pr-9 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal-500 outline-none transition-colors uppercase placeholder:text-slate-400"
+                                            className="w-full pl-9 pr-9 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal-500 outline-none transition-colors placeholder:text-slate-400"
                                         />
                                         {searchQuery && (
                                             <button
@@ -372,14 +410,12 @@ export function LandingHero({
 
                         {/* Action */}
                         <motion.button
-                            whileHover={ready && !loading ? { scale: 1.01, y: -1 } : {}}
-                            whileTap={ready && !loading ? { scale: 0.98 } : {}}
                             onClick={onAnalyze}
                             disabled={!ready || loading}
                             className={cn(
-                                "w-full py-4 text-sm font-bold font-mono tracking-widest uppercase flex items-center justify-center gap-3 transition-all",
+                                "w-full py-4 text-sm font-bold font-mono tracking-widest uppercase flex items-center justify-center gap-3",
                                 ready && !loading
-                                    ? "bg-slate-900 text-white hover:bg-slate-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                                    ? "bg-teal-500 text-white shadow-[0_0_20px_rgba(20,184,166,0.3)] border border-teal-400"
                                     : loading
                                         ? "bg-teal-600 text-white cursor-wait"
                                         : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
@@ -388,12 +424,12 @@ export function LandingHero({
                             {loading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    PROCESSING_REQUEST...
+                                    Analysing&hellip;
                                 </>
                             ) : (
                                 <>
                                     <Cpu className="w-4 h-4" />
-                                    INITIATE_ANALYSIS
+                                    Run analysis
                                     <ChevronRight className="w-4 h-4" />
                                 </>
                             )}
