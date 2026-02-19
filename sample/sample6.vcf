@@ -1,0 +1,6 @@
+##fileformat=VCFv4.2
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr22	42526694	rs3892097	A	G	.	PASS	AF=0.23;DP=45;GENE=CYP2D6;STAR=*4;RS=rs3892097;MQ=60
+chr10	96541616	rs4244285	G	A	.	PASS	AF=0.11;GENE=CYP2C19;MQ=55;STAR=*2;DP=30;RS=rs4244285
