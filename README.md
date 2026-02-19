@@ -227,9 +227,8 @@ hackathon-pharmaguard/
 │       ├── PatientHistory.tsx
 │       └── ui/ProcessingState.tsx
 │
-├── sample/                   # Sample VCF files for testing
-│   ├── TC_P1_PATIENT_001_Normal.vcf   # Hackathon test case
-│   └── sample2.vcf ... sample12.vcf  # Additional edge cases
+├── sample/                   # Judge-provided test VCF
+│   └── TC_P1_PATIENT_001_Normal.vcf   # Official test case
 │
 ├── .env.example              # Environment variable template
 ├── ProblemStatement.md       # Hackathon problem statement
@@ -238,22 +237,22 @@ hackathon-pharmaguard/
 
 ---
 
-## 🧪 Testing
+## 🧪 Verification
 
-### Run VCF Parser Spec Tests
+### VCF Parser Spec Tests
 ```bash
 cd backend
 python test_parser_spec.py
 ```
 
-### Test with the Judge's TC_P1 file
+### Test with the Judge's TC_P1 file via curl
 ```bash
 curl -X POST http://localhost:8000/api/analyze \
   -F "vcf_file=@sample/TC_P1_PATIENT_001_Normal.vcf" \
   -F "drugs=CODEINE,WARFARIN,CLOPIDOGREL,SIMVASTATIN,AZATHIOPRINE,FLUOROURACIL"
 ```
 
-Expected for TC_P1: All 6 drugs → `risk_label: "Safe"`, `phenotype: "NM"`, CYP2D6 diplotype `*1/*2`.
+Expected: All 6 drugs → `risk_label: "Safe"`, `phenotype: "NM"`, CYP2D6 diplotype `*1/*2`.
 
 ---
 
