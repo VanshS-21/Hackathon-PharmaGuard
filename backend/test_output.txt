@@ -1,0 +1,52 @@
+﻿============================================================
+SECTION A ù VALIDATION CHECKS
+============================================================
+
+--- CHECK 1: File Extension (.vcf) ---
+  [INFO] Extension check is in main.py API endpoint (not in parse_vcf)
+  [INFO] Verified: main.py line 58 checks filename.lower().endswith('.vcf')
+  [PASS] Extension check exists in main.py ù HTTPException 400 if not .vcf
+
+--- CHECK 2: File Size (0 < size < 5MB) ---
+  [INFO] Size check is in main.py API endpoint (not in parse_vcf)
+  [INFO] Verified: main.py line 62 checks len(contents)==0 or >5MB
+  [PASS] Size check exists in main.py ù HTTPException 400 if empty or >5MB
+
+--- CHECK 3: ##fileformat=VCFv4.2 header ---
+  [PASS] Empty string rejected ù Not a valid VCF v4.2 file
+  [PASS] Wrong version rejected ù Not a valid VCF v4.2 file
+  [PASS] Non-VCF content rejected ù Not a valid VCF v4.2 file
+
+--- CHECK 4: #CHROM header line ---
+  [PASS] Missing #CHROM rejected ù Invalid VCF structure. Missing column header
+
+--- CHECK 5: Pharmacogenomic annotations ---
+  [PASS] No GENE=/STAR= tags rejected ù VCF file missing pharmacogenomic annotations
+  [PASS] GENE= without STAR= rejected ù VCF file missing pharmacogenomic annotations
+
+--- CHECK 6: At least 1 data row ---
+  [PASS] No data rows rejected ù VCF file has no valid data rows
+  [PASS] Only blank lines after header rejected ù VCF file has no valid data rows
+
+============================================================
+SECTION B ù PARSING LOGIC
+============================================================
+
+--- Step 2: ## lines skipped (metadata) ---
+  [PASS] ## lines not in variants ù Got 3 variants, none from ## lines
+
+--- Step 3: # lines (column header) skipped ---
+  [PASS] #CHROM line not in variants ù Implicitly verified ù no 'CHROM' in variant genes
+
+--- Step 4: Empty lines skipped ---
+  [PASS] Blank lines ignored, 2 variants found ù Got 2 variants
+
+--- Step 5: Split by TAB (not space) ---
+  [PASS] Space-separated line handled correctly ù Rejected (no valid pgx rows)
+
+--- Step 6: Rows with < 8 columns skipped ---
+  [PASS] Short-column row skipped, 1 variant found ù Got 1 variants
+
+--- Step 7: RSID = col[2], INFO = col[7] ---
+  [PASS] RSID extracted correctly ù Got rsid=rs3892097
+  [PASS] Gene from INFO extracted ù Got gene=CYP2D6

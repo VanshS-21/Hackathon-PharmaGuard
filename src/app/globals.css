@@ -1,26 +1,316 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================================
+   PharmaGuard — Professional Clinical
+   ============================================================ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* Core surfaces - Light, Sterile, Clean */
+  --background: #f8fafc;
+  /* Slate-50 */
+  --foreground: #0f172a;
+  /* Slate-900 */
+
+  --surface-0: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #f1f5f9;
+  /* Slate-100 */
+  --surface-3: #e2e8f0;
+  /* Slate-200 */
+
+  --glass: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(148, 163, 184, 0.2);
+
+  /* Accent — Professional Teal/Blue */
+  --accent: #0d9488;
+  /* Teal-600 */
+  --accent-dim: #0f766e;
+  /* Teal-700 */
+  --accent-light: #f0fdfa;
+  /* Teal-50 */
+  --accent-glow: rgba(13, 148, 136, 0.15);
+
+  /* Text hierarchy */
+  --text-primary: #0f172a;
+  /* Slate-900 */
+  --text-secondary: #475569;
+  /* Slate-600 */
+  --text-tertiary: #64748b;
+  /* Slate-500 */
+  --text-muted: #94a3b8;
+  /* Slate-400 */
+
+  /* Semantic colors - Medical Standards */
+  --safe: #059669;
+  /* Emerald-600 */
+  --safe-glow: rgba(5, 150, 105, 0.15);
+  --safe-surface: #ecfdf5;
+  /* Emerald-50 */
+
+  --caution: #d97706;
+  /* Amber-600 */
+  --caution-glow: rgba(217, 119, 6, 0.15);
+  --caution-surface: #fffbeb;
+  /* Amber-50 */
+
+  --danger: #dc2626;
+  /* Red-600 */
+  --danger-glow: rgba(220, 38, 38, 0.15);
+  --danger-surface: #fef2f2;
+  /* Red-50 */
+
+  --info: #0284c7;
+  /* Sky-600 */
+  --info-surface: #f0f9ff;
+  /* Sky-50 */
+
+  /* Borders and dividers */
+  --border: #e2e8f0;
+  /* Slate-200 */
+  --border-strong: #cbd5e1;
+  /* Slate-300 */
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle Grid Background - replacing noise for "graph paper" scientific feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), var(--font-body), system-ui, sans-serif;
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   Card - Clean, elevated
+   ============================================================ */
+
+.card {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  border-color: var(--border-strong);
+}
+
+/* ============================================================
+   Drop Zone
+   ============================================================ */
+
+.drop-zone {
+  border: 2px dashed var(--border-strong);
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--surface-2);
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.drop-zone.has-file {
+  border-color: var(--safe);
+  background: var(--safe-surface);
+  border-style: solid;
+}
+
+/* ============================================================
+   Risk Badges - Pill style
+   ============================================================ */
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.risk-safe {
+  background: var(--safe-surface);
+  color: var(--safe);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.risk-adjust {
+  background: var(--caution-surface);
+  color: var(--caution);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.risk-toxic {
+  background: var(--danger-surface);
+  color: var(--danger);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.risk-unknown {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-dim);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--text-muted);
+}
+
+.btn-secondary {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+/* ============================================================
+   Status - Processing Steps
+   ============================================================ */
+
+.step-item {
+  position: relative;
+  padding-left: 24px;
+}
+
+.step-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.step-item.active::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+.step-item.completed::before {
+  background: var(--safe);
+}
+
+.step-line {
+  position: absolute;
+  left: 3px;
+  top: 16px;
+  bottom: -12px;
+  width: 2px;
+  background: var(--surface-2);
+}
+
+.step-item:last-child .step-line {
+  display: none;
 }
