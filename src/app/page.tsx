@@ -158,7 +158,7 @@ export default function Home() {
         throw new Error(err.detail || `Error ${res.status}`);
       }
 
-      const data: DrugResult[] = await res.json();
+      const data = await res.json() as DrugResult[];
       setResults(data);
 
       // Save to patient history (patient info stays client-side only)
@@ -234,7 +234,7 @@ export default function Home() {
 
   // --- Load from history ---
   const handleLoadHistory = useCallback((entry: HistoryEntry) => {
-    setResults(entry.results);
+    setResults(entry.results as DrugResult[]);
     setPatientInfo({ name: entry.patientName, dob: entry.patientDob, age: null });
     setProcessing(false);
     setShowHistory(false);
