@@ -200,10 +200,10 @@ export function LandingHero({
             >
                 <div className="panel-tech p-1">
                     <div className="bg-slate-50/50 p-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
-                        <h3 className="text-xs font-bold text-slate-700 flex items-center gap-2 font-mono uppercase tracking-wider">
+                        <h2 className="text-xs font-bold text-slate-700 flex items-center gap-2 font-mono uppercase tracking-wider">
                             <Binary className="w-4 h-4 text-slate-400" />
                             New Analysis
-                        </h3>
+                        </h2>
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={onShowHistory}
@@ -229,6 +229,7 @@ export function LandingHero({
                                     <input
                                         type="text"
                                         placeholder="Full name"
+                                        aria-label="Patient full name"
                                         value={patientInfo.name}
                                         onChange={(e) => onPatientInfoChange({ ...patientInfo, name: e.target.value })}
                                         className="w-full px-3 py-2 text-sm font-mono border border-slate-300 bg-white focus:border-teal-400 focus:ring-1 focus:ring-teal-400 outline-none transition-colors placeholder:text-slate-400"
@@ -237,6 +238,7 @@ export function LandingHero({
                                 <div>
                                     <input
                                         type="date"
+                                        aria-label="Patient date of birth"
                                         value={patientInfo.dob}
                                         onChange={(e) => {
                                             const dob = e.target.value;
@@ -254,6 +256,7 @@ export function LandingHero({
                                     <input
                                         type="text"
                                         readOnly
+                                        aria-label="Calculated patient age"
                                         value={patientInfo.age !== null ? `${patientInfo.age} years` : ""}
                                         placeholder="Age"
                                         className="w-full px-3 py-2 text-sm font-mono border border-slate-200 bg-slate-50 text-slate-500 cursor-default placeholder:text-slate-400"
@@ -289,6 +292,7 @@ export function LandingHero({
                                     ref={fileInputRef}
                                     type="file"
                                     accept=".vcf"
+                                    aria-label="Upload VCF genetic data file"
                                     className="hidden"
                                     onChange={(e) => {
                                         if (e.target.files?.[0]) onFileChange(e.target.files[0]);

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hackathon-pharma-guard.vercel.app/sitemap.xml

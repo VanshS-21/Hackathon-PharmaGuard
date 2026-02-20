@@ -16,9 +16,36 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://hackathon-pharma-guard.vercel.app";
+
 export const metadata: Metadata = {
-  title: "PharmaGuard | Clinical Pharmacogenomics",
-  description: "Identify drug-gene interactions and personalise therapy using CPIC Level A evidence.",
+  title: "PharmaGuard | Pharmacogenomic Risk Prediction",
+  description: "PharmaGuard analyzes patient VCF genetic data to predict personalized drug risks and provide CPIC Level A clinically actionable recommendations for safer prescribing decisions.",
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "PharmaGuard | Pharmacogenomic Risk Prediction",
+    description: "AI-powered pharmacogenomics: upload a VCF file and instantly get CPIC-aligned drug risk predictions for safer prescribing.",
+    url: SITE_URL,
+    siteName: "PharmaGuard",
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "PharmaGuard - Pharmacogenomic Risk Prediction",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PharmaGuard | Pharmacogenomic Risk Prediction",
+    description: "Upload a VCF file and get CPIC Level A drug risk predictions in seconds.",
+    images: [`${SITE_URL}/og-image.png`],
+  },
   icons: {
     icon: "/favicon.ico",
   },
@@ -70,8 +97,16 @@ export default function RootLayout({
         <div className="fixed bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
         <div className="fixed bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-slate-300 pointer-events-none z-40 opacity-50"></div>
 
+        {/* ─── SKIP LINK (accessibility) ─── */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-12 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-teal-600 focus:text-white focus:rounded text-sm font-medium"
+        >
+          Skip to main content
+        </a>
+
         {/* ─── MAIN CONTENT ─── */}
-        <main className="pt-16 min-h-screen relative z-10">
+        <main id="main-content" className="pt-16 min-h-screen relative z-10">
           {children}
         </main>
 
