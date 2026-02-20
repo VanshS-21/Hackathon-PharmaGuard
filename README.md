@@ -276,7 +276,10 @@ VCF files **must**:
 
 | Name | Role |
 |------|------|
-| Vansh S. | Full-stack Development, VCF Parsing, Backend API, LLM Integration |
+| Vansh Sahu | Full-stack Development, VCF Parsing, Backend API, LLM Integration |
+| Badri Gupta | Frontend Development, UI/UX Design, Component Architecture |
+| Siddharth Dubey | Pharmacogenomics Research, CPIC Guidelines, Clinical Validation |
+| Samaksh Undirwade | Backend Development, Risk Engine, Testing & QA |
 
 ---
 
