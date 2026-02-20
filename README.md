@@ -9,6 +9,7 @@
 ## 🔗 Links
 
 - **Live Demo:** [https://hackathon-pharma-guard.vercel.app](https://hackathon-pharma-guard.vercel.app)
+- **Demo Video (LinkedIn):** *(Upload video to LinkedIn tagging #RIFT2026 #PharmaGuard #Pharmacogenomics #AIinHealthcare and paste link here)*
 - **API (Backend):** [https://hackathon-pharmaguard.onrender.com](https://hackathon-pharmaguard.onrender.com)
 - **API Docs:** [https://hackathon-pharmaguard.onrender.com/docs](https://hackathon-pharmaguard.onrender.com/docs)
 - **GitHub:** [https://github.com/VanshS-21/Hackathon-PharmaGuard](https://github.com/VanshS-21/Hackathon-PharmaGuard)
