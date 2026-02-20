@@ -20,7 +20,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://hackathon-pharma-gu
 
 export const metadata: Metadata = {
   title: "PharmaGuard | Pharmacogenomic Risk Prediction",
-  description: "PharmaGuard analyzes patient VCF genetic data to predict personalized drug risks and provide CPIC Level A clinically actionable recommendations for safer prescribing decisions.",
+  description: "PharmaGuard analyzes patient VCF files to predict drug risks and provide CPIC Level A pharmacogenomic recommendations for personalized, safer prescribing.",
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
