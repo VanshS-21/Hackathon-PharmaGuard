@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CheckCircle, HelpCircle, XCircle, Shield, BookOpen, Activity } from "lucide-react";
+import { AlertTriangle, CheckCircle, HelpCircle, XCircle, Shield, BookOpen } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -76,9 +76,6 @@ export function TriageBanner({
                 containerClass
             )}
         >
-            <div className="absolute top-0 right-0 p-2 opacity-10">
-                <Activity className="w-32 h-32" />
-            </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                 <div className="flex items-start gap-4">
