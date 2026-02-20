@@ -65,7 +65,7 @@ export default function RootLayout({
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-slate-100 font-bold">
               <Shield className="w-3.5 h-3.5 text-teal-500" />
-              PharmaGuard <span className="text-teal-500">v2.4.0</span>
+              PharmaGuard <span className="hidden sm:inline text-teal-500">v2.4.0</span>
             </div>
             <div className="hidden md:flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
