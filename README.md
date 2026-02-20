@@ -9,8 +9,9 @@
 ## 🔗 Links
 
 - **Live Demo:** [https://hackathon-pharma-guard.vercel.app](https://hackathon-pharma-guard.vercel.app)
+- **API (Backend):** [https://hackathon-pharmaguard.onrender.com](https://hackathon-pharmaguard.onrender.com)
+- **API Docs:** [https://hackathon-pharmaguard.onrender.com/docs](https://hackathon-pharmaguard.onrender.com/docs)
 - **GitHub:** [https://github.com/VanshS-21/Hackathon-PharmaGuard](https://github.com/VanshS-21/Hackathon-PharmaGuard)
-- **API Docs:** `http://localhost:8000/docs` (Swagger UI, auto-generated)
 
 ---
 
