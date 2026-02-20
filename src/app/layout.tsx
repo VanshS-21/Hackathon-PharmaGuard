@@ -118,9 +118,9 @@ export default function RootLayout({
               <span>PharmaGuard Clinical Systems &copy; 2026</span>
             </div>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-teal-600 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-teal-600 transition-colors">Terms of Use</a>
-              <a href="#" className="hover:text-teal-600 transition-colors">System Status</a>
+              <a href="https://github.com/VanshS-21/Hackathon-PharmaGuard#privacy" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Privacy Policy</a>
+              <a href="https://github.com/VanshS-21/Hackathon-PharmaGuard#terms" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Terms of Use</a>
+              <a href="https://hackathon-pharmaguard.onrender.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">System Status</a>
             </div>
           </div>
         </footer>
