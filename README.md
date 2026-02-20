@@ -197,10 +197,10 @@ Analyze a VCF file for one or more drugs.
 ### Other Endpoints
 | Endpoint | Description |
 |----------|-------------|
+| `GET /` | Root — service info (status, version) |
 | `GET /health` | Health check |
-| `GET /api/drugs` | List supported drugs |
-| `GET /api/genes` | List supported genes |
-| `GET /api/cpic/level-a-drugs` | CPIC Level A gene-drug pairs |
+| `GET /api/cpic/level-a-drugs` | All CPIC Level A gene-drug pairs |
+| `GET /api/cpic/drugs/{gene}` | CPIC drug pairs for a specific gene |
 
 ---
 
